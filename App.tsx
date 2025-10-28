@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -77,8 +78,8 @@ const App: React.FC = () => {
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800">
       <header className="flex justify-center my-6">
-          <div className="bg-gradient-to-br from-sky-100 to-indigo-100 shadow-xl rounded-full py-3 px-8">
-              <h1 className="text-2xl font-bold text-slate-800 tracking-wide">আর.এস নেক্সাস লিমিটেড</h1>
+          <div className="bg-gradient-to-br from-sky-50 to-white shadow-xl rounded-full py-3 px-8 border border-slate-200/60">
+              <h1 className="font-tiro-bangla text-3xl font-bold text-indigo-900 tracking-widest text-shadow-custom">আর.এস নেক্সাস লিমিটেড</h1>
           </div>
       </header>
 
