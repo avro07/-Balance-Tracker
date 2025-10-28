@@ -77,13 +77,13 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800">
-      <header className="flex justify-center my-6">
-          <div className="bg-gradient-to-br from-sky-50 to-white shadow-xl rounded-full py-2 px-6 sm:py-3 sm:px-8 border border-slate-200/60">
-              <h1 className="font-tiro-bangla text-2xl sm:text-3xl font-bold text-indigo-900 tracking-widest text-shadow-custom">আর.এস নেক্সাস লিমিটেড</h1>
-          </div>
-      </header>
+      <div className="p-4 sm:p-6">
+        <header className="bg-gradient-to-br from-sky-50 to-white shadow-md rounded-xl py-4 sm:py-5 border border-slate-200/60">
+            <h1 className="text-center font-tiro-bangla text-2xl sm:text-3xl font-bold text-indigo-900 tracking-widest text-shadow-custom">আর.এস নেক্সাস লিমিটেড</h1>
+        </header>
+      </div>
 
-      <main className="px-4 pt-2 pb-24">
+      <main className="px-4 pb-24">
         <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} />
         <div className="mt-8">
           <TransactionList
