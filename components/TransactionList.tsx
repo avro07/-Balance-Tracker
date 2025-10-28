@@ -22,7 +22,7 @@ interface TransactionListProps {
 }
 
 const typeDetails = {
-  [TransactionType.BUY]: { icon: <BuyIcon />, color: 'bg-sky-100 text-sky-600', sign: '-', gradient: 'bg-gradient-to-br from-sky-50 to-white' },
+  [TransactionType.BUY]: { icon: <BuyIcon />, color: 'bg-sky-100 text-sky-600', sign: '-', gradient: 'bg-gradient-to-br from-sky-100 to-indigo-100' },
   [TransactionType.SELL]: { icon: <SellIcon />, color: 'bg-rose-100 text-rose-600', sign: '+', gradient: 'bg-gradient-to-br from-rose-50 to-white' },
   [TransactionType.DEPOSIT]: { icon: <DepositIcon />, color: 'bg-green-100 text-green-600', sign: '+', gradient: 'bg-gradient-to-br from-green-50 to-white' },
   [TransactionType.WITHDRAW]: { icon: <WithdrawIcon />, color: 'bg-amber-100 text-amber-600', sign: '-', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
