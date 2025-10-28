@@ -1,6 +1,8 @@
+
 import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 // Demo data for initial setup
 const getDemoData = (): Transaction[] => [
@@ -13,34 +15,67 @@ const getDemoData = (): Transaction[] => [
 const getTodayDateString = (): string => new Date().toISOString().split('T')[0];
 
 export const useTransactions = () => {
-  const initialTransactions = useMemo(() => getDemoData(), []);
-  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('transactions', initialTransactions);
+  const { isAdmin } = useAuth();
+  const [storedTransactions, setStoredTransactions] = useLocalStorage<Transaction[]>('transactions', getDemoData());
+
+  const transactionsSource = useMemo(() => {
+    // Admins always use localStorage.
+    if (isAdmin) {
+      return storedTransactions;
+    }
+
+    // For public users, check for shared data in the URL.
+    const params = new URLSearchParams(window.location.search);
+    const sharedData = params.get('data');
+
+    if (sharedData) {
+      try {
+        // Decode and parse the transaction data from the URL.
+        const jsonString = atob(decodeURIComponent(sharedData));
+        const parsedTransactions = JSON.parse(jsonString);
+        if (Array.isArray(parsedTransactions)) {
+          return parsedTransactions;
+        }
+      } catch (e) {
+        console.error("Failed to parse shared data:", e);
+        // Fallback to demo data if parsing fails.
+        return getDemoData();
+      }
+    }
+
+    // Default for public users is the static demo data.
+    return getDemoData();
+  }, [isAdmin, storedTransactions]);
+
 
   const addTransaction = useCallback((transaction: Omit<Transaction, 'id'>) => {
+    if (!isAdmin) return;
     const newTransaction: Transaction = {
       ...transaction,
       id: crypto.randomUUID(),
     };
-    setTransactions(prev => [...prev, newTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-  }, [setTransactions]);
+    setStoredTransactions(prev => [...prev, newTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  }, [setStoredTransactions, isAdmin]);
   
   const updateTransaction = useCallback((updatedTransaction: Transaction) => {
-    setTransactions(prev => 
+    if (!isAdmin) return;
+    setStoredTransactions(prev => 
       prev
         .map(tx => (tx.id === updatedTransaction.id ? updatedTransaction : tx))
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     );
-  }, [setTransactions]);
+  }, [setStoredTransactions, isAdmin]);
 
   const deleteTransaction = useCallback((id: string) => {
+    if (!isAdmin) return;
     if (window.confirm('Are you sure you want to delete this transaction?')) {
-      setTransactions(prev => prev.filter(tx => tx.id !== id));
+      setStoredTransactions(prev => prev.filter(tx => tx.id !== id));
     }
-  }, [setTransactions]);
+  }, [setStoredTransactions, isAdmin]);
 
   const transactionsWithRunningBalance = useMemo(() => {
     // Sort chronologically to calculate running balance correctly
-    const sorted = [...transactions].sort((a, b) => {
+    const sorted = [...transactionsSource].sort((a, b) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
         if (dateA !== dateB) {
@@ -75,11 +110,11 @@ export const useTransactions = () => {
 
     // Reverse back to descending order for display
     return augmented.reverse();
-  }, [transactions]);
+  }, [transactionsSource]);
 
 
   const summaries: GlobalSummaries = useMemo(() => {
-    return transactions.reduce((acc, tx) => {
+    return transactionsSource.reduce((acc, tx) => {
       acc.totalTransactions += 1;
       
       if (tx.type === TransactionType.BUY) {
@@ -109,10 +144,10 @@ export const useTransactions = () => {
       totalChargesBdt: 0,
       totalTransactions: 0,
     });
-  }, [transactions]);
+  }, [transactionsSource]);
 
   const getDailySummary = useCallback((date: string): DailySummary => {
-    const dailyTransactions = transactions.filter(tx => tx.date === date);
+    const dailyTransactions = transactionsSource.filter(tx => tx.date === date);
 
     return dailyTransactions.reduce((acc, tx) => {
       if (tx.type === TransactionType.BUY) {
@@ -126,7 +161,7 @@ export const useTransactions = () => {
       return acc;
     }, { totalBuyUSD: 0, totalBuyBDT: 0, totalSellUSD: 0, totalSellBDT: 0, profit: 0 });
 
-  }, [transactions]);
+  }, [transactionsSource]);
 
   return { transactions: transactionsWithRunningBalance, addTransaction, updateTransaction, deleteTransaction, summaries, getDailySummary };
 };

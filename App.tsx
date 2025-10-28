@@ -6,7 +6,8 @@ import Dashboard from './components/Dashboard';
 import TransactionList from './components/TransactionList';
 import TransactionForm from './components/TransactionForm';
 import ExportModal from './components/ExportModal';
-import { AddIcon, ExportIcon } from './components/Icons';
+import ShareModal from './components/ShareModal';
+import { AddIcon, ExportIcon, ShareIcon } from './components/Icons';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -21,6 +22,8 @@ const App: React.FC = () => {
 
   const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareableLink, setShareableLink] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   
   // State for new range filters
@@ -74,6 +77,26 @@ const App: React.FC = () => {
     setIsTransactionFormOpen(false);
   };
 
+  const handleOpenShareModal = () => {
+    if (!isAdmin) return;
+    try {
+      const rawTransactions = window.localStorage.getItem('transactions');
+      if (!rawTransactions || JSON.parse(rawTransactions).length === 0) {
+        alert("No transactions to share.");
+        return;
+      }
+
+      const encodedData = encodeURIComponent(btoa(rawTransactions));
+      const link = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+      
+      setShareableLink(link);
+      setIsShareModalOpen(true);
+    } catch (e) {
+      console.error("Error generating shareable link:", e);
+      alert("Could not generate shareable link. The data might be too large.");
+    }
+  };
+
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800">
@@ -121,26 +144,41 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-        <div className="max-w-4xl mx-auto flex justify-center items-center gap-4">
-          <button
-            onClick={() => setIsExportModalOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <ExportIcon />
-            <span>Export</span>
-          </button>
-          <button
-            onClick={handleOpenAddForm}
-            disabled={!isAdmin}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed"
-          >
-            <AddIcon />
-            <span>New Transaction</span>
-          </button>
+      {isShareModalOpen && (
+        <ShareModal
+          link={shareableLink}
+          onClose={() => setIsShareModalOpen(false)}
+        />
+      )}
+
+      {/* Bottom Action Bar - Only for Admins */}
+      {isAdmin && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+          <div className="max-w-4xl mx-auto flex justify-center items-center gap-4">
+            <button
+              onClick={() => setIsExportModalOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <ExportIcon />
+              <span>Export</span>
+            </button>
+             <button
+              onClick={handleOpenShareModal}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <ShareIcon />
+              <span>Share</span>
+            </button>
+            <button
+              onClick={handleOpenAddForm}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <AddIcon />
+              <span>New Transaction</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -6,7 +6,7 @@ export const downloadCSV = (data: Transaction[], filename: string) => {
     return;
   }
 
-  const headers = ['ID', 'Date', 'Type', 'Payment Method', 'USD Amount', 'USD Rate', 'BDT Charge', 'BDT Amount', 'Note', 'Running BDT Balance', 'Running USD Balance'];
+  const headers = ['ID', 'Date', 'Type', 'Payment Method', 'USD Amount', 'USD Rate', 'BDT Charge', 'BDT Amount', 'Note', 'Available BDT Balance', 'Available USD Balance'];
   const csvRows = [headers.join(',')];
 
   // The data is passed in descending order, for export it might be better to show it chronologically
