@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -7,6 +6,7 @@ import TransactionList from './components/TransactionList';
 import TransactionForm from './components/TransactionForm';
 import ExportModal from './components/ExportModal';
 import { AddIcon, ExportIcon } from './components/Icons';
+import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
   const {
@@ -28,6 +28,8 @@ const App: React.FC = () => {
   const [maxAmount, setMaxAmount] = useState('');
   const [minRate, setMinRate] = useState('');
   const [maxRate, setMaxRate] = useState('');
+
+  const { isAdmin } = useAuth();
 
 
   const filteredTransactions = useMemo(() => {
@@ -55,11 +57,13 @@ const App: React.FC = () => {
   }, [transactions, searchDate, minAmount, maxAmount, minRate, maxRate]);
 
   const handleOpenAddForm = () => {
+    if (!isAdmin) return;
     setEditingTransaction(null);
     setIsTransactionFormOpen(true);
   };
 
   const handleOpenEditForm = (transaction: Transaction) => {
+    if (!isAdmin) return;
     setEditingTransaction(transaction);
     setIsTransactionFormOpen(true);
   };
@@ -72,13 +76,13 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800">
-      <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-10">
+      <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 text-center">
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">আর.এস নেক্সাস লিমিটেড</h1>
         </div>
       </header>
 
-      <main className="px-4 pt-20 pb-24">
+      <main className="px-4 pt-8 pb-24">
         <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} />
         <div className="mt-8">
           <TransactionList
@@ -95,6 +99,7 @@ const App: React.FC = () => {
             setMaxRate={setMaxRate}
             onEditTransaction={handleOpenEditForm}
             onDeleteTransaction={deleteTransaction}
+            isAdmin={isAdmin}
           />
         </div>
       </main>
@@ -127,7 +132,8 @@ const App: React.FC = () => {
           </button>
           <button
             onClick={handleOpenAddForm}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={!isAdmin}
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed"
           >
             <AddIcon />
             <span>New Transaction</span>

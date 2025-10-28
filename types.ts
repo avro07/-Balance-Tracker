@@ -14,6 +14,7 @@ export interface Transaction {
   usdRate?: number;
   bdtCharge?: number;
   bdtAmount: number;
+  note?: string;
   runningBdtBalance?: number;
   runningUsdBalance?: number;
 }

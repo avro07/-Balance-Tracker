@@ -19,6 +19,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   const [usdRate, setUsdRate] = useState('');
   const [bdtCharge, setBdtCharge] = useState('0');
   const [bdtAmount, setBdtAmount] = useState('');
+  const [note, setNote] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   
   const isEditing = !!transactionToEdit;
@@ -30,6 +31,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
       setType(transactionToEdit.type);
       setPaymentMethod(transactionToEdit.paymentMethod);
       setBdtAmount(transactionToEdit.bdtAmount.toString());
+      setNote(transactionToEdit.note ?? '');
       
       const isInitialTypeUsd = transactionToEdit.type === TransactionType.BUY || transactionToEdit.type === TransactionType.SELL;
       if (isInitialTypeUsd) {
@@ -55,6 +57,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   const handleTypeChange = (newType: TransactionType) => {
     setType(newType);
     setErrors({}); // Clear errors on type change
+    setNote(''); // Clear note on type change
     const isNewTypeUsd = newType === TransactionType.BUY || newType === TransactionType.SELL;
     if (!isNewTypeUsd) {
       setUsdAmount('');
@@ -115,9 +118,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             onAddTransaction(payload);
         }
     } else {
-        const payload = {
+        const payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'> = {
             date, type, paymentMethod,
             bdtAmount: parseFloat(bdtAmount),
+            note: type === TransactionType.DEPOSIT && note.trim() ? note.trim() : undefined,
         };
         if (isEditing) {
             onUpdateTransaction({ ...payload, id: transactionToEdit.id });
@@ -166,7 +170,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               </div>
             </div>
           ) : (
-            <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
+            <>
+              <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
+              {type === TransactionType.DEPOSIT && (
+                <TextAreaField label="Note (Optional)" placeholder="e.g., Initial capital" value={note} onChange={e => setNote(e.target.value)} rows={2} />
+              )}
+            </>
           )}
 
           <div className="flex justify-end gap-3 pt-4">
@@ -183,6 +192,14 @@ const InputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label
     <div>
         <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
         <input {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+    </div>
+);
+
+const TextAreaField: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string, error?: string }> = ({ label, error, ...props }) => (
+    <div>
+        <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
+        <textarea {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
 );

@@ -24,11 +24,16 @@ export const useLocalStorage = <T,>(key: string, initialValue: T): [T, React.Dis
   // This effect handles changes from other tabs/windows.
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === key && e.newValue) {
-        try {
-          setStoredValue(JSON.parse(e.newValue));
-        } catch (error) {
-           console.error(`Error parsing localStorage key “${key}”:`, error);
+      if (e.key === key) {
+        if (e.newValue) {
+          try {
+            setStoredValue(JSON.parse(e.newValue));
+          } catch (error) {
+            console.error(`Error parsing localStorage key “${key}”:`, error);
+          }
+        } else {
+          // This handles the case where the key is removed or cleared in another tab.
+          setStoredValue(initialValue);
         }
       }
     };
@@ -36,7 +41,7 @@ export const useLocalStorage = <T,>(key: string, initialValue: T): [T, React.Dis
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [key]);
+  }, [key, initialValue]);
 
   return [storedValue, setStoredValue];
 };

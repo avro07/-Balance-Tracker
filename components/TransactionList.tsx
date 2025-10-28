@@ -18,6 +18,7 @@ interface TransactionListProps {
   setMaxRate: (value: string) => void;
   onEditTransaction: (transaction: Transaction) => void;
   onDeleteTransaction: (id: string) => void;
+  isAdmin: boolean;
 }
 
 const typeDetails = {
@@ -31,10 +32,11 @@ interface TransactionItemProps {
   transaction: Transaction;
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => void;
+  isAdmin: boolean;
 }
 
 
-const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete }) => {
+const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete, isAdmin }) => {
   const details = typeDetails[tx.type];
   const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
 
@@ -67,6 +69,12 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
             )}
           </div>
         </div>
+
+        {tx.type === TransactionType.DEPOSIT && tx.note && (
+            <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
+                <p><strong className="font-medium text-slate-500">Note:</strong> {tx.note}</p>
+            </div>
+        )}
         
         {(tx.runningBdtBalance !== undefined && tx.runningUsdBalance !== undefined) && (
             <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-end gap-4 text-xs">
@@ -81,14 +89,16 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
             </div>
         )}
       </div>
-      <div className="flex flex-col space-y-2 -mr-2">
-        <button onClick={() => onEdit(tx)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors">
-          <EditIcon />
-        </button>
-        <button onClick={() => onDelete(tx.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
-          <DeleteIcon />
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="flex flex-col space-y-2 -mr-2">
+          <button onClick={() => onEdit(tx)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors">
+            <EditIcon />
+          </button>
+          <button onClick={() => onDelete(tx.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+            <DeleteIcon />
+          </button>
+        </div>
+      )}
     </li>
   );
 };
@@ -108,7 +118,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
   minRate, setMinRate,
   maxRate, setMaxRate,
   onEditTransaction, 
-  onDeleteTransaction 
+  onDeleteTransaction,
+  isAdmin
 }) => {
   return (
     <div>
@@ -134,7 +145,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
       {transactions.length > 0 ? (
         <ul className="space-y-3">
-          {transactions.map(tx => <TransactionItem key={tx.id} transaction={tx} onEdit={onEditTransaction} onDelete={onDeleteTransaction} />)}
+          {transactions.map(tx => <TransactionItem key={tx.id} transaction={tx} onEdit={onEditTransaction} onDelete={onDeleteTransaction} isAdmin={isAdmin} />)}
         </ul>
       ) : (
         <div className="text-center py-10 px-4 bg-white rounded-lg shadow-sm">

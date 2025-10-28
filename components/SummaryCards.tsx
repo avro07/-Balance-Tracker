@@ -9,12 +9,12 @@ interface SummaryCardsProps {
 }
 
 const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactNode; color: string }> = ({ title, value, icon, color }) => (
-    <div className="flex-shrink-0 w-48 bg-white p-4 rounded-xl shadow-sm border border-slate-200/80">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${color}`}>
+    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200/80">
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center ${color}`}>
             {icon}
         </div>
-        <p className="text-sm text-slate-500 mt-3">{title}</p>
-        <p className="text-xl font-bold text-slate-800 truncate">{value}</p>
+        <p className="text-xs md:text-sm text-slate-500 mt-2 truncate">{title}</p>
+        <p className="text-base md:text-xl font-bold text-slate-800 truncate">{value}</p>
     </div>
 );
 
@@ -31,7 +31,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries }) => {
 
     return (
         <div>
-            <div className="flex justify-center gap-4 overflow-x-auto pb-4 -mx-4 px-4">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
                 {cards.map(card => <SummaryCard key={card.title} {...card} />)}
             </div>
         </div>

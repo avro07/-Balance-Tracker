@@ -5,7 +5,7 @@ import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../
 // Demo data for initial setup
 const getDemoData = (): Transaction[] => [
   { id: '1', date: '2025-10-06', type: TransactionType.BUY, paymentMethod: 'Bank', usdAmount: 100, usdRate: 115.50, bdtCharge: 231, bdtAmount: 11781 },
-  { id: '2', date: '2025-10-07', type: TransactionType.DEPOSIT, paymentMethod: 'Cash', bdtAmount: 50000 },
+  { id: '2', date: '2025-10-07', type: TransactionType.DEPOSIT, paymentMethod: 'Cash', bdtAmount: 50000, note: 'Initial capital injection.' },
   { id: '3', date: '2025-10-08', type: TransactionType.SELL, paymentMethod: 'bKash', usdAmount: 50, usdRate: 116.00, bdtCharge: 116, bdtAmount: 5916 },
   { id: '4', date: getTodayDateString(), type: TransactionType.BUY, paymentMethod: 'Bank', usdAmount: 200, usdRate: 115.80, bdtCharge: 347.4, bdtAmount: 23507.4 },
 ];
