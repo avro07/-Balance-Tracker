@@ -22,10 +22,10 @@ interface TransactionListProps {
 }
 
 const typeDetails = {
-  [TransactionType.BUY]: { icon: <BuyIcon />, color: 'bg-sky-100 text-sky-600', sign: '-' },
-  [TransactionType.SELL]: { icon: <SellIcon />, color: 'bg-rose-100 text-rose-600', sign: '+' },
-  [TransactionType.DEPOSIT]: { icon: <DepositIcon />, color: 'bg-green-100 text-green-600', sign: '+' },
-  [TransactionType.WITHDRAW]: { icon: <WithdrawIcon />, color: 'bg-amber-100 text-amber-600', sign: '-' },
+  [TransactionType.BUY]: { icon: <BuyIcon />, color: 'bg-sky-100 text-sky-600', sign: '-', gradient: 'bg-gradient-to-br from-sky-50 to-white' },
+  [TransactionType.SELL]: { icon: <SellIcon />, color: 'bg-rose-100 text-rose-600', sign: '+', gradient: 'bg-gradient-to-br from-rose-50 to-white' },
+  [TransactionType.DEPOSIT]: { icon: <DepositIcon />, color: 'bg-green-100 text-green-600', sign: '+', gradient: 'bg-gradient-to-br from-green-50 to-white' },
+  [TransactionType.WITHDRAW]: { icon: <WithdrawIcon />, color: 'bg-amber-100 text-amber-600', sign: '-', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
 };
 
 interface TransactionItemProps {
@@ -41,7 +41,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
   const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
 
   return (
-    <li className="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80 flex items-start gap-4">
+    <li className={`p-4 rounded-xl shadow-sm border border-slate-200/80 flex items-start gap-4 ${details.gradient}`}>
       <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center ${details.color}`}>
         {details.icon}
       </div>

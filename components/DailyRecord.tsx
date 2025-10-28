@@ -17,37 +17,58 @@ const StatChip: React.FC<{ label: string; value: string; color: string }> = ({ l
 
 const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transaction: tx }) => {
     const typeClasses = {
-        [TransactionType.BUY]: { bg: 'bg-green-100', text: 'text-green-800', label: 'কেনা' },
-        [TransactionType.SELL]: { bg: 'bg-red-100', text: 'text-red-800', label: 'বিক্রি' },
-        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'ডিপোজিট' },
-        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'উত্তোলন' },
+        [TransactionType.BUY]: { bg: 'bg-green-100', text: 'text-green-800', label: 'কেনা', gradient: 'bg-gradient-to-br from-green-50 to-white' },
+        [TransactionType.SELL]: { bg: 'bg-red-100', text: 'text-red-800', label: 'বিক্রি', gradient: 'bg-gradient-to-br from-red-50 to-white' },
+        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'ডিপোজিট', gradient: 'bg-gradient-to-br from-blue-50 to-white' },
+        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'উত্তোলন', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
     };
     const details = typeClasses[tx.type];
     const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
     const bdtChargeAmount = isUsdTransaction ? tx.bdtCharge || 0 : 0;
 
     return (
-        <div className="bg-white border border-slate-200/80 rounded-lg p-4 relative text-slate-700 shadow-sm">
-            <span className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded-full ${details.bg} ${details.text}`}>
-                {details.label}
-            </span>
-            <p className="absolute top-4 right-4 text-xs text-slate-400">{tx.date}</p>
-            <div className="mt-10 space-y-1 text-sm">
+        <div className={`border border-slate-200/80 rounded-lg p-4 flex flex-col text-slate-700 shadow-sm h-full ${details.gradient}`}>
+            {/* Header */}
+            <div className="flex justify-between items-start mb-3">
+                <span className={`text-xs font-bold px-2 py-1 rounded-full ${details.bg} ${details.text}`}>
+                    {details.label}
+                </span>
+                <p className="text-xs text-slate-400">{tx.date}</p>
+            </div>
+
+            {/* Body */}
+            <div className="flex-grow space-y-1.5 text-sm">
                 {isUsdTransaction && (
                     <>
-                        <p>USD: <span className="font-medium text-slate-900">{formatCurrency(tx.usdAmount!, 'USD')}</span></p>
-                        <p>রেট: <span className="font-medium text-slate-900">{formatRate(tx.usdRate, 2)}</span></p>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">USD:</span>
+                            <span className="font-semibold text-slate-900">{formatCurrency(tx.usdAmount!, 'USD')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">রেট:</span>
+                            <span className="font-semibold text-slate-900">{formatRate(tx.usdRate, 2)}</span>
+                        </div>
                     </>
                 )}
-                <p>চার্জ: <span className="font-medium text-slate-900">{formatCurrency(bdtChargeAmount)}</span></p>
-                <div className="flex items-center gap-2">
-                    <p>পেমেন্ট:</p>
-                    <span className="flex items-center gap-1.5 bg-slate-100 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                <div className="flex justify-between">
+                    <span className="text-slate-500">চার্জ:</span>
+                    <span className="font-semibold text-slate-900">{formatCurrency(bdtChargeAmount)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-slate-500">পেমেন্ট:</span>
+                    <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                         <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
                         {tx.paymentMethod}
                     </span>
                 </div>
-                <p className="text-base mt-2"><strong className="text-slate-900">BDT পরিমাণ:</strong> <span className="font-bold text-indigo-600 ml-1">{formatCurrency(tx.bdtAmount)}</span></p>
+            </div>
+            
+            {/* Footer */}
+            <div className="mt-4 pt-3 border-t border-slate-100">
+                <p className="text-base font-bold text-slate-800 flex justify-between items-center">
+                    <span>BDT পরিমাণ:</span>
+                    <span className="text-indigo-600 text-lg">{formatCurrency(tx.bdtAmount)}</span>
+                </p>
             </div>
         </div>
     );
@@ -132,7 +153,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
                 </div>
                 
                 {dailyTransactions.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         {dailyTransactions.map(tx => (
                             <DailyTransactionCard key={tx.id} transaction={tx} />
                         ))}

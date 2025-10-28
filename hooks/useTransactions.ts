@@ -13,7 +13,8 @@ const getDemoData = (): Transaction[] => [
 const getTodayDateString = (): string => new Date().toISOString().split('T')[0];
 
 export const useTransactions = () => {
-  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('transactions', getDemoData());
+  const initialTransactions = useMemo(() => getDemoData(), []);
+  const [transactions, setTransactions] = useLocalStorage<Transaction[]>('transactions', initialTransactions);
 
   const addTransaction = useCallback((transaction: Omit<Transaction, 'id'>) => {
     const newTransaction: Transaction = {
