@@ -76,9 +76,9 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800">
-      <header className="max-w-2xl mx-auto my-6">
-          <div className="bg-gradient-to-r from-sky-500 to-indigo-600 shadow-xl rounded-full py-5 text-center">
-              <h1 className="text-2xl font-bold text-white tracking-wide">আর.এস নেক্সাস লিমিটেড</h1>
+      <header className="flex justify-center my-6">
+          <div className="bg-gradient-to-br from-sky-100 to-indigo-100 shadow-xl rounded-full py-3 px-8">
+              <h1 className="text-2xl font-bold text-slate-800 tracking-wide">আর.এস নেক্সাস লিমিটেড</h1>
           </div>
       </header>
 
