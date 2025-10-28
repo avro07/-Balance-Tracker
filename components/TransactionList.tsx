@@ -1,0 +1,149 @@
+import React from 'react';
+import { Transaction, TransactionType } from '../types';
+import { formatCurrency } from '../utils/formatting';
+import { BuyIcon, SellIcon, DepositIcon, WithdrawIcon, EditIcon, DeleteIcon } from './Icons';
+import PaymentMethodIcon from './PaymentMethodIcon';
+
+interface TransactionListProps {
+  transactions: Transaction[];
+  searchDate: string;
+  setSearchDate: (date: string) => void;
+  minAmount: string;
+  setMinAmount: (value: string) => void;
+  maxAmount: string;
+  setMaxAmount: (value: string) => void;
+  minRate: string;
+  setMinRate: (value: string) => void;
+  maxRate: string;
+  setMaxRate: (value: string) => void;
+  onEditTransaction: (transaction: Transaction) => void;
+  onDeleteTransaction: (id: string) => void;
+}
+
+const typeDetails = {
+  [TransactionType.BUY]: { icon: <BuyIcon />, color: 'bg-sky-100 text-sky-600', sign: '-' },
+  [TransactionType.SELL]: { icon: <SellIcon />, color: 'bg-rose-100 text-rose-600', sign: '+' },
+  [TransactionType.DEPOSIT]: { icon: <DepositIcon />, color: 'bg-green-100 text-green-600', sign: '+' },
+  [TransactionType.WITHDRAW]: { icon: <WithdrawIcon />, color: 'bg-amber-100 text-amber-600', sign: '-' },
+};
+
+interface TransactionItemProps {
+  transaction: Transaction;
+  onEdit: (transaction: Transaction) => void;
+  onDelete: (id: string) => void;
+}
+
+
+const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete }) => {
+  const details = typeDetails[tx.type];
+  const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
+
+  return (
+    <li className="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80 flex items-start gap-4">
+      <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center ${details.color}`}>
+        {details.icon}
+      </div>
+      <div className="flex-grow">
+        <div className="flex justify-between items-start">
+          <span className="font-semibold text-slate-800">{tx.type}</span>
+          <span className={`font-bold ${details.sign === '+' ? 'text-green-600' : 'text-red-500'}`}>
+            {details.sign} {formatCurrency(tx.bdtAmount)}
+          </span>
+        </div>
+        <div className="flex justify-between items-end text-sm text-slate-500 mt-1">
+          <div>
+            <div className="flex items-center gap-2 text-xs">
+                <span>{new Date(tx.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span className="text-slate-300">|</span>
+                <div className="flex items-center gap-1">
+                    <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
+                    <span>{tx.paymentMethod}</span>
+                </div>
+            </div>
+            {isUsdTransaction && (
+                <p className="text-xs text-slate-400 mt-0.5">
+                    {formatCurrency(tx.usdAmount || 0, 'USD')} @ {tx.usdRate?.toFixed(2)} (+{formatCurrency(tx.bdtCharge || 0, 'BDT')} charge)
+                </p>
+            )}
+          </div>
+        </div>
+        
+        {(tx.runningBdtBalance !== undefined && tx.runningUsdBalance !== undefined) && (
+            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-end gap-4 text-xs">
+                <div className="text-right">
+                    <span className="text-slate-400">BDT Balance</span>
+                    <p className="font-semibold text-slate-600">{formatCurrency(tx.runningBdtBalance)}</p>
+                </div>
+                <div className="text-right">
+                    <span className="text-slate-400">USD Balance</span>
+                    <p className="font-semibold text-slate-600">{formatCurrency(tx.runningUsdBalance, 'USD')}</p>
+                </div>
+            </div>
+        )}
+      </div>
+      <div className="flex flex-col space-y-2 -mr-2">
+        <button onClick={() => onEdit(tx)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors">
+          <EditIcon />
+        </button>
+        <button onClick={() => onDelete(tx.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+          <DeleteIcon />
+        </button>
+      </div>
+    </li>
+  );
+};
+
+const FilterInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
+  <input
+    {...props}
+    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+  />
+);
+
+const TransactionList: React.FC<TransactionListProps> = ({ 
+  transactions, 
+  searchDate, setSearchDate,
+  minAmount, setMinAmount,
+  maxAmount, setMaxAmount,
+  minRate, setMinRate,
+  maxRate, setMaxRate,
+  onEditTransaction, 
+  onDeleteTransaction 
+}) => {
+  return (
+    <div>
+      <h2 className="text-lg font-semibold text-slate-800 mb-3">All Transactions</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4 p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm">
+        <div className="lg:col-span-1">
+          <FilterInput
+            type="date"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-1 md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-3">
+            <FilterInput type="number" placeholder="Min Amount (USD)" value={minAmount} onChange={e => setMinAmount(e.target.value)} />
+            <FilterInput type="number" placeholder="Max Amount (USD)" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} />
+        </div>
+        <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 grid grid-cols-2 gap-3">
+           <FilterInput type="number" step="any" placeholder="Min Rate" value={minRate} onChange={e => setMinRate(e.target.value)} />
+           <FilterInput type="number" step="any" placeholder="Max Rate" value={maxRate} onChange={e => setMaxRate(e.target.value)} />
+        </div>
+      </div>
+
+
+      {transactions.length > 0 ? (
+        <ul className="space-y-3">
+          {transactions.map(tx => <TransactionItem key={tx.id} transaction={tx} onEdit={onEditTransaction} onDelete={onDeleteTransaction} />)}
+        </ul>
+      ) : (
+        <div className="text-center py-10 px-4 bg-white rounded-lg shadow-sm">
+            <p className="text-slate-500">No transactions found.</p>
+            <p className="text-sm text-slate-400">Try adjusting your filters or add a new transaction.</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TransactionList;

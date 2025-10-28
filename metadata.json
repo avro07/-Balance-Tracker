@@ -1,0 +1,5 @@
+{
+  "name": "BDT-USD Balance Tracker",
+  "description": "A mobile-first React application for tracking USD to BDT transactions, monitoring balances, and generating reports. It provides a clean, lightweight interface for managing financial records efficiently.",
+  "requestFramePermissions": []
+}
