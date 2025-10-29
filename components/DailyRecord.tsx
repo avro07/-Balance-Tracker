@@ -9,7 +9,7 @@ interface DailyRecordProps {
 }
 
 const StatChip: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
-    <div className={`px-3 py-1.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2 ${color}`}>
+    <div className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 ${color}`}>
         <span>{label}:</span>
         <span className="font-bold">{value}</span>
     </div>
