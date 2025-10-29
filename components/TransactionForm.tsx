@@ -143,7 +143,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="p-5 border-b flex justify-between items-center">
           <h2 className="text-lg font-semibold">{isEditing ? 'Edit Transaction' : 'New Transaction'}</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100"><CloseIcon /></button>
@@ -173,7 +173,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                   </button>
                 </div>
               </div>
-              <div className="bg-slate-50 p-3 rounded-md text-center">
+              <div className="bg-gradient-to-br from-sky-50 to-white p-3 rounded-lg text-center border border-slate-200/60 shadow-sm">
                   <p className="text-sm text-slate-500">Calculated BDT Amount</p>
                   <p className="font-bold text-lg text-slate-800">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
               </div>
