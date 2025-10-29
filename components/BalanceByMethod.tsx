@@ -17,7 +17,7 @@ const BalanceByMethod: React.FC<BalanceByMethodProps> = ({ balances }) => {
     <div>
       <div className="flex items-center gap-2 mb-3">
           <BalanceIcon />
-          <h2 className="text-lg font-semibold text-slate-800">অ্যাকাউন্ট ব্যালেন্স</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Account Balance</h2>
       </div>
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80">
         <ul className="space-y-3">
