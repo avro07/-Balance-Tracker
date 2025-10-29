@@ -154,27 +154,31 @@ const App: React.FC = () => {
       {/* Bottom Action Bar - Only for Admins */}
       {isAdmin && (
         <div className="fixed bottom-4 left-4 right-4 z-10">
-          <div className="max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 bg-gradient-to-br from-sky-50 to-white shadow-md rounded-xl p-3 border border-slate-200/60">
+          <div className="max-w-md mx-auto flex justify-center items-center gap-3 bg-gradient-to-br from-sky-50 to-white shadow-lg rounded-xl p-2 border border-slate-200/60">
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-600 font-medium rounded-xl hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              aria-label="Export Transactions"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 font-medium rounded-lg hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <ExportIcon />
               <span>Export</span>
             </button>
-             <button
+            
+            <button
+              onClick={handleOpenAddForm}
+              aria-label="New Transaction"
+              className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-blue-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <AddIcon className="w-7 h-7" />
+            </button>
+
+            <button
               onClick={handleOpenShareModal}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-600 font-medium rounded-xl hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              aria-label="Share Transactions"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 font-medium rounded-lg hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <ShareIcon />
               <span>Share</span>
-            </button>
-            <button
-              onClick={handleOpenAddForm}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-br from-indigo-600 to-blue-500 text-white font-semibold rounded-xl hover:-translate-y-0.5 transform transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <AddIcon />
-              <span>New Transaction</span>
             </button>
           </div>
         </div>
