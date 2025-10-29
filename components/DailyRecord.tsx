@@ -1,11 +1,15 @@
+
 import React, { useState, useMemo } from 'react';
-import { Transaction, TransactionType } from '../types';
+// FIX: Import DailySummary to be used in the props interface.
+import { Transaction, TransactionType, DailySummary } from '../types';
 import { formatCurrency, getTodayDateString, formatRate } from '../utils/formatting';
 import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
 import PaymentMethodIcon from './PaymentMethodIcon';
 
 interface DailyRecordProps {
   transactions: Transaction[];
+  // FIX: Added getDailySummary to props to match what is passed from Dashboard.tsx
+  getDailySummary: (date: string) => DailySummary;
 }
 
 const StatChip: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
@@ -75,7 +79,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
 };
 
 
-const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
+const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary }) => {
     const [selectedDate, setSelectedDate] = useState(getTodayDateString());
 
     const dailyTransactions = useMemo(() => {

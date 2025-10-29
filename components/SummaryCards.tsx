@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { GlobalSummaries } from '../types';
 import { formatCurrency } from '../utils/formatting';
@@ -10,13 +11,16 @@ interface SummaryCardsProps {
     onBdtBalanceClick: () => void;
 }
 
-const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactNode; gradient: string; iconColor: string, onClick?: () => void }> = ({ title, value, icon, gradient, iconColor, onClick }) => (
+// FIX: Changed icon prop type from React.ReactNode to React.ReactElement to allow cloning with a className prop.
+// FIX: Updated the `icon` prop type to be more specific (`React.ReactElement<{ className?: string }>`), allowing `React.cloneElement` to correctly pass the `className` prop and resolve the TypeScript error.
+const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactElement<{ className?: string }>; gradient: string; iconColor: string, onClick?: () => void }> = ({ title, value, icon, gradient, iconColor, onClick }) => (
     <div 
         onClick={onClick}
         className={`relative overflow-hidden p-4 rounded-xl shadow-sm border border-slate-200/60 ${gradient} ${onClick ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-transform duration-200' : ''}`}
     >
         <div className={`absolute -top-3 -right-3 w-20 h-20 ${iconColor} opacity-10 pointer-events-none`}>
-            {React.cloneElement(icon as React.ReactElement, { className: "w-20 h-20" })}
+            {/* FIX: Removed unnecessary cast after updating the icon prop type. */}
+            {React.cloneElement(icon, { className: "w-20 h-20" })}
         </div>
         <div className="relative z-10">
             <p className="text-sm font-semibold text-slate-600 truncate">{title}</p>
