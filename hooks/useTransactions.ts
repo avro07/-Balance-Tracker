@@ -1,9 +1,11 @@
 
+
 import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { PAYMENT_METHODS } from '../constants';
+import { deserializeTransactionsForSharing } from '../utils/sharing';
 
 // Demo data for initial setup
 const getDemoData = (): Transaction[] => [
@@ -31,9 +33,10 @@ export const useTransactions = () => {
 
     if (sharedData) {
       try {
-        // Decode and parse the transaction data from the URL.
+        // Decode and deserialize the transaction data from the URL.
         const jsonString = atob(decodeURIComponent(sharedData));
-        const parsedTransactions = JSON.parse(jsonString);
+        // The deserialization function handles both new compact and old object formats.
+        const parsedTransactions = deserializeTransactionsForSharing(jsonString);
         if (Array.isArray(parsedTransactions)) {
           return parsedTransactions;
         }

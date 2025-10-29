@@ -8,6 +8,7 @@ import ExportModal from './components/ExportModal';
 import ShareModal from './components/ShareModal';
 import { AddIcon, ExportIcon, ShareIcon } from './components/Icons';
 import { useAuth } from './contexts/AuthContext';
+import { serializeTransactionsForSharing } from './utils/sharing';
 
 const App: React.FC = () => {
   const {
@@ -68,13 +69,20 @@ const App: React.FC = () => {
   const handleOpenShareModal = () => {
     if (!isAdmin) return;
     try {
-      const rawTransactions = window.localStorage.getItem('transactions');
-      if (!rawTransactions || JSON.parse(rawTransactions).length === 0) {
+      const rawTransactionsJson = window.localStorage.getItem('transactions');
+      if (!rawTransactionsJson) {
+        alert("No transactions to share.");
+        return;
+      }
+      const transactionsToShare = JSON.parse(rawTransactionsJson);
+      if (transactionsToShare.length === 0) {
         alert("No transactions to share.");
         return;
       }
 
-      const encodedData = encodeURIComponent(btoa(rawTransactions));
+      // Serialize transactions into a compact format to shorten the URL
+      const compactData = serializeTransactionsForSharing(transactionsToShare);
+      const encodedData = encodeURIComponent(btoa(compactData));
       const link = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
       
       setShareableLink(link);
