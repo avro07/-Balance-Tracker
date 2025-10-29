@@ -70,7 +70,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
           </div>
         </div>
 
-        {tx.type === TransactionType.DEPOSIT && tx.note && (
+        {(tx.type === TransactionType.DEPOSIT || tx.type === TransactionType.WITHDRAW) && tx.note && (
             <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
                 <p><strong className="font-medium text-slate-500">Note:</strong> {tx.note}</p>
             </div>

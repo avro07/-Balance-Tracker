@@ -121,7 +121,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
         const payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'> = {
             date, type, paymentMethod,
             bdtAmount: parseFloat(bdtAmount),
-            note: type === TransactionType.DEPOSIT && note.trim() ? note.trim() : undefined,
+            note: (type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW) && note.trim() ? note.trim() : undefined,
         };
         if (isEditing) {
             onUpdateTransaction({ ...payload, id: transactionToEdit.id });
@@ -172,8 +172,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           ) : (
             <>
               <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
-              {type === TransactionType.DEPOSIT && (
-                <TextAreaField label="Note (Optional)" placeholder="e.g., Initial capital" value={note} onChange={e => setNote(e.target.value)} rows={2} />
+              {(type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW) && (
+                <TextAreaField
+                  label="Note (Optional)"
+                  placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
+                  value={note}
+                  onChange={e => setNote(e.target.value)}
+                  rows={2}
+                />
               )}
             </>
           )}
