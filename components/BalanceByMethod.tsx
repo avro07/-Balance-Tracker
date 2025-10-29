@@ -14,7 +14,7 @@ const BalanceByMethod: React.FC<BalanceByMethodProps> = ({ balances }) => {
   return (
     <ul className="space-y-3">
       {sortedBalances.map(([method, balance]) => (
-        <li key={method} className="flex items-center justify-between p-2 rounded-md transition-colors hover:bg-slate-50">
+        <li key={method} className="flex items-center justify-between p-2 rounded-md transition-colors hover:bg-green-100/50">
           <div className="flex items-center gap-3">
             <PaymentMethodIcon method={method} className="w-6 h-6" />
             <span className="font-semibold text-slate-700">{method}</span>
