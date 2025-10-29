@@ -153,8 +153,8 @@ const App: React.FC = () => {
 
       {/* Bottom Action Bar - Only for Admins */}
       {isAdmin && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-br from-sky-50 to-white border-t border-slate-200/70 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-          <div className="max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4">
+        <div className="fixed bottom-4 left-4 right-4 z-10">
+          <div className="max-w-md mx-auto flex justify-center items-center gap-3 sm:gap-4 bg-gradient-to-br from-sky-50 to-white shadow-md rounded-xl p-3 border border-slate-200/60">
             <button
               onClick={() => setIsExportModalOpen(true)}
               className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 text-slate-600 font-medium rounded-xl hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
