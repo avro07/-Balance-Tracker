@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GlobalSummaries } from '../types';
 import { formatCurrency } from '../utils/formatting';
@@ -5,10 +6,15 @@ import { BdtIcon, UsdIcon, BuyIcon, SellIcon, ChargeIcon, TransactionIcon } from
 
 interface SummaryCardsProps {
     summaries: GlobalSummaries;
+    isAdmin: boolean;
+    onBdtBalanceClick: () => void;
 }
 
-const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactNode; gradient: string; iconColor: string }> = ({ title, value, icon, gradient, iconColor }) => (
-    <div className={`relative overflow-hidden p-4 rounded-xl shadow-sm border border-slate-200/60 ${gradient}`}>
+const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactNode; gradient: string; iconColor: string, onClick?: () => void }> = ({ title, value, icon, gradient, iconColor, onClick }) => (
+    <div 
+        onClick={onClick}
+        className={`relative overflow-hidden p-4 rounded-xl shadow-sm border border-slate-200/60 ${gradient} ${onClick ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-transform duration-200' : ''}`}
+    >
         <div className={`absolute -top-3 -right-3 w-20 h-20 ${iconColor} opacity-10 pointer-events-none`}>
             {React.cloneElement(icon as React.ReactElement, { className: "w-20 h-20" })}
         </div>
@@ -20,9 +26,16 @@ const SummaryCard: React.FC<{ title: string; value: string; icon: React.ReactNod
 );
 
 
-const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries }) => {
+const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries, isAdmin, onBdtBalanceClick }) => {
     const cards = [
-        { title: 'BDT Balance', value: formatCurrency(summaries.bdtBalance), icon: <BdtIcon />, gradient: 'bg-gradient-to-br from-green-50 to-white', iconColor: 'text-green-500' },
+        { 
+            title: 'BDT Balance', 
+            value: formatCurrency(summaries.bdtBalance), 
+            icon: <BdtIcon />, 
+            gradient: 'bg-gradient-to-br from-green-50 to-white', 
+            iconColor: 'text-green-500',
+            ...(isAdmin && { onClick: onBdtBalanceClick })
+        },
         { title: 'USD Balance', value: formatCurrency(summaries.usdBalance, 'USD'), icon: <UsdIcon />, gradient: 'bg-gradient-to-br from-blue-50 to-white', iconColor: 'text-blue-500' },
         { title: 'Total Buy (USD)', value: formatCurrency(summaries.totalBuy, 'USD'), icon: <BuyIcon />, gradient: 'bg-gradient-to-br from-sky-50 to-white', iconColor: 'text-sky-500' },
         { title: 'Total Sell (USD)', value: formatCurrency(summaries.totalSell, 'USD'), icon: <SellIcon />, gradient: 'bg-gradient-to-br from-rose-50 to-white', iconColor: 'text-rose-500' },
