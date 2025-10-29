@@ -34,4 +34,5 @@ export interface GlobalSummaries {
     totalSell: number;
     totalChargesBdt: number;
     totalTransactions: number;
+    bdtBalanceByMethod: { [key: string]: number };
 }

@@ -3,6 +3,7 @@ import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { PAYMENT_METHODS } from '../constants';
 
 // Demo data for initial setup
 const getDemoData = (): Transaction[] => [
@@ -114,8 +115,17 @@ export const useTransactions = () => {
 
 
   const summaries: GlobalSummaries = useMemo(() => {
+    const initialBalanceByMethod: { [key: string]: number } = {};
+    PAYMENT_METHODS.forEach(method => {
+        initialBalanceByMethod[method] = 0;
+    });
+
     return transactionsSource.reduce((acc, tx) => {
       acc.totalTransactions += 1;
+      const method = tx.paymentMethod;
+      if (acc.bdtBalanceByMethod[method] === undefined) {
+          acc.bdtBalanceByMethod[method] = 0;
+      }
       
       if (tx.type === TransactionType.BUY) {
         const usdAmount = tx.usdAmount || 0;
@@ -123,16 +133,20 @@ export const useTransactions = () => {
         acc.totalBuy += usdAmount;
         acc.bdtBalance -= tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
+        acc.bdtBalanceByMethod[method] -= tx.bdtAmount;
       } else if (tx.type === TransactionType.SELL) {
         const usdAmount = tx.usdAmount || 0;
         acc.usdBalance -= usdAmount;
         acc.totalSell += usdAmount;
         acc.bdtBalance += tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
+        acc.bdtBalanceByMethod[method] += tx.bdtAmount;
       } else if (tx.type === TransactionType.DEPOSIT) {
         acc.bdtBalance += tx.bdtAmount;
+        acc.bdtBalanceByMethod[method] += tx.bdtAmount;
       } else if (tx.type === TransactionType.WITHDRAW) {
         acc.bdtBalance -= tx.bdtAmount;
+        acc.bdtBalanceByMethod[method] -= tx.bdtAmount;
       }
 
       return acc;
@@ -143,6 +157,7 @@ export const useTransactions = () => {
       totalSell: 0,
       totalChargesBdt: 0,
       totalTransactions: 0,
+      bdtBalanceByMethod: initialBalanceByMethod,
     });
   }, [transactionsSource]);
 

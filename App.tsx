@@ -107,7 +107,7 @@ const App: React.FC = () => {
       </div>
 
       <main className="px-4 pb-24">
-        <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} />
+        <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} isAdmin={isAdmin} />
         <div className="mt-8">
           <TransactionList
             transactions={filteredTransactions}
