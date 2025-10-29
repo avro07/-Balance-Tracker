@@ -1,4 +1,5 @@
 
+
 import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
@@ -53,9 +54,13 @@ export const useTransactions = () => {
     if (!isAdmin) return;
     const newTransaction: Transaction = {
       ...transaction,
-      id: crypto.randomUUID(),
+      id: `${Date.now()}-${crypto.randomUUID()}`,
     };
-    setStoredTransactions(prev => [...prev, newTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    setStoredTransactions(prev => [...prev, newTransaction].sort((a, b) => {
+      const dateComparison = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (dateComparison !== 0) return dateComparison;
+      return b.id.localeCompare(a.id);
+    }));
   }, [setStoredTransactions, isAdmin]);
   
   const updateTransaction = useCallback((updatedTransaction: Transaction) => {
@@ -63,7 +68,11 @@ export const useTransactions = () => {
     setStoredTransactions(prev => 
       prev
         .map(tx => (tx.id === updatedTransaction.id ? updatedTransaction : tx))
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .sort((a, b) => {
+          const dateComparison = new Date(b.date).getTime() - new Date(a.date).getTime();
+          if (dateComparison !== 0) return dateComparison;
+          return b.id.localeCompare(a.id);
+        })
     );
   }, [setStoredTransactions, isAdmin]);
 
