@@ -143,8 +143,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="p-5 border-b flex justify-between items-center">
+      <div className="bg-gradient-to-br from-rose-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60">
+        <div className="p-5 border-b border-rose-200/60 flex justify-between items-center">
           <h2 className="text-lg font-semibold">{isEditing ? 'Edit Transaction' : 'New Transaction'}</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100"><CloseIcon /></button>
         </div>

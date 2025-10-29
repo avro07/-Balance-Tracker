@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -139,7 +138,7 @@ const App: React.FC = () => {
             <button
               onClick={() => setIsExportModalOpen(true)}
               aria-label="Export Transactions"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 font-medium rounded-lg hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-sky-500 to-blue-500 text-white font-semibold rounded-lg shadow-md shadow-sky-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <ExportIcon />
               <span>Export</span>
@@ -156,7 +155,7 @@ const App: React.FC = () => {
             <button
               onClick={handleOpenShareModal}
               aria-label="Share Transactions"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-600 font-medium rounded-lg hover:bg-slate-200 hover:text-slate-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               <ShareIcon />
               <span>Share</span>
