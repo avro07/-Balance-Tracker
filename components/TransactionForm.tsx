@@ -194,7 +194,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           )}
 
           <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Cancel</button>
             {!isUsdTransaction && (
                 <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">{isEditing ? 'Update Transaction' : 'Add Transaction'}</button>
             )}
