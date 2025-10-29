@@ -125,7 +125,7 @@ export const CopyIcon: React.FC<{ className?: string }> = ({ className = "h-5 w-
 
 // Payment Method Icons
 export const BankIconSimple: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256" className={className}><path d="M240,96H16V56a8,8,0,0,1,8-8H232a8,8,0,0,1,8,8ZM128,24,16.21,46.57A8,8,0,0,0,16,53.75V56H240V53.75a8,8,0,0,0-0.21-2.82ZM248,104v96a16,16,0,0,1-16,16H24a16,16,0,0,1-16-16V104H88v48a8,8,0,0,0,16,0V104h32v48a8,8,0,0,0,16,0V104h80Z"></path></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className={className}><path d="M11.5,1L2,6V8H21V6M16,10V17H19V10M10,10V17H13V10M4,10V17H7V10M2.5,18H20.5V20H2.5V18Z" /></svg>
 );
 
 export const CashIcon: React.FC<{ className?: string }> = ({ className }) => (
