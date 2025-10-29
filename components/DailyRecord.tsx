@@ -17,10 +17,10 @@ const StatChip: React.FC<{ label: string; value: string; color: string }> = ({ l
 
 const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transaction: tx }) => {
     const typeClasses = {
-        [TransactionType.BUY]: { bg: 'bg-green-100', text: 'text-green-800', label: 'কেনা', gradient: 'bg-gradient-to-br from-green-50 to-white' },
-        [TransactionType.SELL]: { bg: 'bg-red-100', text: 'text-red-800', label: 'বিক্রি', gradient: 'bg-gradient-to-br from-red-50 to-white' },
-        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'ডিপোজিট', gradient: 'bg-gradient-to-br from-blue-50 to-white' },
-        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'উত্তোলন', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
+        [TransactionType.BUY]: { bg: 'bg-green-100', text: 'text-green-800', label: 'Buy', gradient: 'bg-gradient-to-br from-green-50 to-white' },
+        [TransactionType.SELL]: { bg: 'bg-red-100', text: 'text-red-800', label: 'Sell', gradient: 'bg-gradient-to-br from-red-50 to-white' },
+        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Deposit', gradient: 'bg-gradient-to-br from-blue-50 to-white' },
+        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Withdraw', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
     };
     const details = typeClasses[tx.type];
     const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
@@ -45,17 +45,17 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
                             <span className="font-semibold text-slate-900">{formatCurrency(tx.usdAmount!, 'USD')}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-slate-500">রেট:</span>
+                            <span className="text-slate-500">Rate:</span>
                             <span className="font-semibold text-slate-900">{formatRate(tx.usdRate, 2)}</span>
                         </div>
                     </>
                 )}
                 <div className="flex justify-between">
-                    <span className="text-slate-500">চার্জ:</span>
+                    <span className="text-slate-500">Charge:</span>
                     <span className="font-semibold text-slate-900">{formatCurrency(bdtChargeAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-slate-500">পেমেন্ট:</span>
+                    <span className="text-slate-500">Payment:</span>
                     <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                         <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
                         {tx.paymentMethod}
@@ -66,7 +66,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
             {/* Footer */}
             <div className="mt-4 pt-3 border-t border-slate-100">
                 <p className="text-base font-bold text-slate-800 flex justify-between items-center">
-                    <span>BDT পরিমাণ:</span>
+                    <span>BDT Amount:</span>
                     <span className="text-indigo-600 text-lg">{formatCurrency(tx.bdtAmount)}</span>
                 </p>
             </div>
@@ -124,9 +124,9 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
         <div>
             <div className="flex items-center gap-2 mb-3">
                 <CalendarIcon />
-                <h2 className="text-lg font-semibold text-slate-800">দৈনিক রেকর্ড</h2>
+                <h2 className="text-lg font-semibold text-slate-800">Daily Record</h2>
             </div>
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200/80">
+            <div className="bg-gradient-to-br from-sky-50 to-white p-4 rounded-xl shadow-sm border border-slate-200/80">
                 <div className="flex items-center justify-center mb-4">
                     <div className="relative flex items-center gap-2">
                          <button onClick={() => navigateDate(-1)} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
@@ -145,11 +145,11 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 mb-6">
-                    <StatChip label="গড় কেনা রেট" value={formatCurrency(dailySummary.avgBuyRate, 'BDT', 2)} color="bg-green-100 text-green-800" />
-                    <StatChip label="গড় বিক্রি রেট" value={formatCurrency(dailySummary.avgSellRate, 'BDT', 2)} color="bg-orange-100 text-orange-800" />
-                    <StatChip label="ক্রয়" value={formatCurrency(dailySummary.totalBuyBDT)} color="bg-purple-100 text-purple-800" />
-                    <StatChip label="বিক্রয়" value={formatCurrency(dailySummary.totalSellBDT)} color="bg-yellow-100 text-yellow-800" />
-                    <StatChip label="লাভ" value={formatCurrency(dailySummary.profit)} color={profitColor} />
+                    <StatChip label="Avg. Buy Rate" value={formatCurrency(dailySummary.avgBuyRate, 'BDT', 2)} color="bg-green-100 text-green-800" />
+                    <StatChip label="Avg. Sell Rate" value={formatCurrency(dailySummary.avgSellRate, 'BDT', 2)} color="bg-orange-100 text-orange-800" />
+                    <StatChip label="Total Buy" value={formatCurrency(dailySummary.totalBuyBDT)} color="bg-purple-100 text-purple-800" />
+                    <StatChip label="Total Sell" value={formatCurrency(dailySummary.totalSellBDT)} color="bg-yellow-100 text-yellow-800" />
+                    <StatChip label="Profit" value={formatCurrency(dailySummary.profit)} color={profitColor} />
                 </div>
                 
                 {dailyTransactions.length > 0 ? (
@@ -160,7 +160,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
                     </div>
                 ) : (
                     <div className="text-center text-slate-500 py-6">
-                        <p>এই তারিখের জন্য কোন লেনদেন পাওয়া যায়নি।</p>
+                        <p>No transactions found for this date.</p>
                     </div>
                 )}
             </div>
