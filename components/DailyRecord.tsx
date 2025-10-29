@@ -122,10 +122,6 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
 
     return (
         <div>
-            <div className="flex items-center justify-center gap-2 mb-3">
-                <CalendarIcon />
-                <h2 className="text-lg font-semibold text-slate-800">Daily Record</h2>
-            </div>
             <div className="bg-gradient-to-br from-sky-50 to-white p-4 rounded-xl shadow-sm border border-slate-200/80">
                 <div className="flex items-center justify-center mb-4">
                     <div className="relative flex items-center gap-2">

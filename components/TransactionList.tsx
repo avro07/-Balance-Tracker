@@ -112,7 +112,6 @@ const TransactionList: React.FC<TransactionListProps> = ({
 }) => {
   return (
     <div>
-      <h2 className="text-lg font-semibold text-slate-800 mb-3 text-center">All Transactions</h2>
       <div className="mb-4 p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm">
         <FilterInput
           type="search"
