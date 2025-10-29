@@ -141,10 +141,10 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
                 </div>
 
                 <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 mb-6">
-                    <StatChip label="Avg. Buy Rate" value={formatCurrency(dailySummary.avgBuyRate, 'BDT', 2)} color="bg-green-100 text-green-800" />
-                    <StatChip label="Avg. Sell Rate" value={formatCurrency(dailySummary.avgSellRate, 'BDT', 2)} color="bg-orange-100 text-orange-800" />
-                    <StatChip label="Total Buy" value={formatCurrency(dailySummary.totalBuyBDT)} color="bg-purple-100 text-purple-800" />
-                    <StatChip label="Total Sell" value={formatCurrency(dailySummary.totalSellBDT)} color="bg-yellow-100 text-yellow-800" />
+                    <StatChip label="Buy Rate" value={formatCurrency(dailySummary.avgBuyRate, 'BDT', 2)} color="bg-green-100 text-green-800" />
+                    <StatChip label="Sell Rate" value={formatCurrency(dailySummary.avgSellRate, 'BDT', 2)} color="bg-orange-100 text-orange-800" />
+                    <StatChip label="Buy" value={formatCurrency(dailySummary.totalBuyBDT)} color="bg-purple-100 text-purple-800" />
+                    <StatChip label="Sell" value={formatCurrency(dailySummary.totalSellBDT)} color="bg-yellow-100 text-yellow-800" />
                     <div className="col-span-2 sm:col-auto">
                       <StatChip label="Profit" value={formatCurrency(dailySummary.profit)} color={profitColor} />
                     </div>
