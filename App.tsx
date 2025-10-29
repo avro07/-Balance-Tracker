@@ -26,39 +26,28 @@ const App: React.FC = () => {
   const [shareableLink, setShareableLink] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   
-  // State for new range filters
-  const [searchDate, setSearchDate] = useState('');
-  const [minAmount, setMinAmount] = useState('');
-  const [maxAmount, setMaxAmount] = useState('');
-  const [minRate, setMinRate] = useState('');
-  const [maxRate, setMaxRate] = useState('');
+  // State for new simplified search
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { isAdmin } = useAuth();
 
 
   const filteredTransactions = useMemo(() => {
-    const minAmt = minAmount ? parseFloat(minAmount) : -Infinity;
-    const maxAmt = maxAmount ? parseFloat(maxAmount) : Infinity;
-    const minRt = minRate ? parseFloat(minRate) : -Infinity;
-    const maxRt = maxRate ? parseFloat(maxRate) : Infinity;
-
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) {
+      return transactions;
+    }
+    
     return transactions.filter(tx => {
       const isUsdTx = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
-
-      const matchesDate = searchDate === '' || tx.date === searchDate;
-
-      // Only apply amount and rate filters to BUY/SELL transactions
-      const matchesAmount = !isUsdTx || (
-        (tx.usdAmount ?? 0) >= minAmt && (tx.usdAmount ?? 0) <= maxAmt
-      );
-
-      const matchesRate = !isUsdTx || (
-        (tx.usdRate ?? 0) >= minRt && (tx.usdRate ?? 0) <= maxRt
-      );
-
-      return matchesDate && matchesAmount && matchesRate;
+      
+      const dateMatch = tx.date.includes(query);
+      const amountMatch = isUsdTx && (tx.usdAmount ?? 0).toString().startsWith(query);
+      const rateMatch = isUsdTx && (tx.usdRate ?? 0).toString().startsWith(query);
+      
+      return dateMatch || amountMatch || rateMatch;
     });
-  }, [transactions, searchDate, minAmount, maxAmount, minRate, maxRate]);
+  }, [transactions, searchQuery]);
 
   const handleOpenAddForm = () => {
     if (!isAdmin) return;
@@ -111,16 +100,8 @@ const App: React.FC = () => {
         <div className="mt-8">
           <TransactionList
             transactions={filteredTransactions}
-            searchDate={searchDate}
-            setSearchDate={setSearchDate}
-            minAmount={minAmount}
-            setMinAmount={setMinAmount}
-            maxAmount={maxAmount}
-            setMaxAmount={setMaxAmount}
-            minRate={minRate}
-            setMinRate={setMinRate}
-            maxRate={maxRate}
-            setMaxRate={setMaxRate}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
             onEditTransaction={handleOpenEditForm}
             onDeleteTransaction={deleteTransaction}
             isAdmin={isAdmin}
@@ -167,7 +148,7 @@ const App: React.FC = () => {
             <button
               onClick={handleOpenAddForm}
               aria-label="New Transaction"
-              className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-blue-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
             >
               <AddIcon className="w-7 h-7" />
             </button>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Transaction, TransactionType } from '../types';
 import { formatCurrency } from '../utils/formatting';
@@ -6,16 +7,8 @@ import PaymentMethodIcon from './PaymentMethodIcon';
 
 interface TransactionListProps {
   transactions: Transaction[];
-  searchDate: string;
-  setSearchDate: (date: string) => void;
-  minAmount: string;
-  setMinAmount: (value: string) => void;
-  maxAmount: string;
-  setMaxAmount: (value: string) => void;
-  minRate: string;
-  setMinRate: (value: string) => void;
-  maxRate: string;
-  setMaxRate: (value: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   onEditTransaction: (transaction: Transaction) => void;
   onDeleteTransaction: (id: string) => void;
   isAdmin: boolean;
@@ -112,11 +105,8 @@ const FilterInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (prop
 
 const TransactionList: React.FC<TransactionListProps> = ({ 
   transactions, 
-  searchDate, setSearchDate,
-  minAmount, setMinAmount,
-  maxAmount, setMaxAmount,
-  minRate, setMinRate,
-  maxRate, setMaxRate,
+  searchQuery,
+  setSearchQuery,
   onEditTransaction, 
   onDeleteTransaction,
   isAdmin
@@ -124,22 +114,13 @@ const TransactionList: React.FC<TransactionListProps> = ({
   return (
     <div>
       <h2 className="text-lg font-semibold text-slate-800 mb-3">All Transactions</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4 p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm">
-        <div className="lg:col-span-1">
-          <FilterInput
-            type="date"
-            value={searchDate}
-            onChange={(e) => setSearchDate(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-1 md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-3">
-            <FilterInput type="number" placeholder="Min Amount (USD)" value={minAmount} onChange={e => setMinAmount(e.target.value)} />
-            <FilterInput type="number" placeholder="Max Amount (USD)" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} />
-        </div>
-        <div className="sm:col-span-2 md:col-span-3 lg:col-span-2 grid grid-cols-2 gap-3">
-           <FilterInput type="number" step="any" placeholder="Min Rate" value={minRate} onChange={e => setMinRate(e.target.value)} />
-           <FilterInput type="number" step="any" placeholder="Max Rate" value={maxRate} onChange={e => setMaxRate(e.target.value)} />
-        </div>
+      <div className="mb-4 p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm">
+        <FilterInput
+          type="search"
+          placeholder="Search by Date, Amount (USD), or Rate..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
 
