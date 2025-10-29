@@ -160,15 +160,24 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           </SelectField>
           
           {isUsdTransaction ? (
-            <div className="grid grid-cols-2 gap-4">
-              <InputField label="USD Amount" type="number" placeholder="e.g., 100" value={usdAmount} onChange={handleInputChange(setUsdAmount, 'usdAmount')} required error={errors.usdAmount}/>
-              <InputField label="USD Rate" type="number" placeholder="e.g., 115.50" value={usdRate} onChange={handleInputChange(setUsdRate, 'usdRate')} required step="any" error={errors.usdRate} />
-              <InputField label="BDT Charge" type="number" placeholder="e.g., 250" value={bdtCharge} onChange={handleInputChange(setBdtCharge, 'bdtCharge')} step="any" error={errors.bdtCharge} />
-              <div className="col-span-2 bg-slate-50 p-3 rounded-md text-center">
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <InputField label="USD Amount" type="number" placeholder="e.g., 100" value={usdAmount} onChange={handleInputChange(setUsdAmount, 'usdAmount')} required error={errors.usdAmount}/>
+                <InputField label="USD Rate" type="number" placeholder="e.g., 115.50" value={usdRate} onChange={handleInputChange(setUsdRate, 'usdRate')} required step="any" error={errors.usdRate} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 items-end">
+                <InputField label="BDT Charge" type="number" placeholder="e.g., 250" value={bdtCharge} onChange={handleInputChange(setBdtCharge, 'bdtCharge')} step="any" error={errors.bdtCharge} />
+                <div>
+                  <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 w-full">
+                    {isEditing ? 'Update Transaction' : 'Add Transaction'}
+                  </button>
+                </div>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-md text-center">
                   <p className="text-sm text-slate-500">Calculated BDT Amount</p>
                   <p className="font-bold text-lg text-slate-800">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
               </div>
-            </div>
+            </>
           ) : (
             <>
               <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
@@ -186,7 +195,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
           <div className="flex justify-end gap-3 pt-4">
             <button type="button" onClick={onClose} className="py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Cancel</button>
-            <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">{isEditing ? 'Update Transaction' : 'Add Transaction'}</button>
+            {!isUsdTransaction && (
+                <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">{isEditing ? 'Update Transaction' : 'Add Transaction'}</button>
+            )}
           </div>
         </form>
       </div>
