@@ -219,6 +219,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                   <SelectField label="To Destination" value={toPaymentMethod} onChange={handleSelectChange(setToPaymentMethod, 'toPaymentMethod')}>
                     <option value="Bank">Bank</option>
                     <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option>
                   </SelectField>
                 </div>
                 {toPaymentMethod === 'Bank' && (
