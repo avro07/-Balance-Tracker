@@ -3,7 +3,8 @@ const APP_SHELL_URLS = [
   '/',
   '/index.html',
   '/index.tsx',
-  '/vite.svg',
+  '/manifest.webmanifest',
+  '/rs-nexus-logo.png',
 ];
 
 // On install, cache the app shell
