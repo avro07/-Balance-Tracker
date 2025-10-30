@@ -10,6 +10,7 @@ export interface Transaction {
   date: string; // YYYY-MM-DD
   type: TransactionType;
   paymentMethod: string;
+  bankAccount?: string;
   usdAmount?: number;
   usdRate?: number;
   bdtCharge?: number;
@@ -35,4 +36,5 @@ export interface GlobalSummaries {
     totalChargesBdt: number;
     totalTransactions: number;
     bdtBalanceByMethod: { [key: string]: number };
+    bdtBalanceByBank: { [key: string]: number };
 }

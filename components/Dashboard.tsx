@@ -1,9 +1,11 @@
 
+
 import React, { useState } from 'react';
 import { DailySummary, GlobalSummaries, Transaction } from '../types';
 import SummaryCards from './SummaryCards';
 import DailyRecord from './DailyRecord';
 import BalanceByMethodModal from './BalanceByMethodModal';
+import BankBalanceDetailsModal from './BankBalanceDetailsModal';
 
 interface DashboardProps {
   summaries: GlobalSummaries;
@@ -14,6 +16,12 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ summaries, getDailySummary, transactions, isAdmin }) => {
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
+  const [isBankDetailsModalOpen, setIsBankDetailsModalOpen] = useState(false);
+
+  const handleShowBankDetails = () => {
+    setIsBalanceModalOpen(false);
+    setIsBankDetailsModalOpen(true);
+  };
 
   return (
     <div className="space-y-8">
@@ -29,6 +37,14 @@ const Dashboard: React.FC<DashboardProps> = ({ summaries, getDailySummary, trans
         <BalanceByMethodModal
           balances={summaries.bdtBalanceByMethod}
           onClose={() => setIsBalanceModalOpen(false)}
+          onShowBankDetails={handleShowBankDetails}
+        />
+      )}
+
+      {isBankDetailsModalOpen && isAdmin && summaries.bdtBalanceByBank && (
+        <BankBalanceDetailsModal
+          balances={summaries.bdtBalanceByBank}
+          onClose={() => setIsBankDetailsModalOpen(false)}
         />
       )}
     </div>

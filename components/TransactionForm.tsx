@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Transaction, TransactionType } from '../types';
-import { PAYMENT_METHODS } from '../constants';
+import { PAYMENT_METHODS, BANK_ACCOUNTS } from '../constants';
 import { getTodayDateString } from '../utils/formatting';
 import { CloseIcon } from './Icons';
 
@@ -15,6 +15,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   const [date, setDate] = useState(getTodayDateString());
   const [type, setType] = useState<TransactionType>(TransactionType.BUY);
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS[0]);
+  const [bankAccount, setBankAccount] = useState('');
   const [usdAmount, setUsdAmount] = useState('');
   const [usdRate, setUsdRate] = useState('');
   const [bdtCharge, setBdtCharge] = useState('0');
@@ -24,12 +25,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   
   const isEditing = !!transactionToEdit;
   const isUsdTransaction = type === TransactionType.BUY || type === TransactionType.SELL;
+  const isBankTransaction = paymentMethod === 'Bank';
 
   useEffect(() => {
     if (isEditing && transactionToEdit) {
       setDate(transactionToEdit.date);
       setType(transactionToEdit.type);
       setPaymentMethod(transactionToEdit.paymentMethod);
+      setBankAccount(transactionToEdit.bankAccount ?? '');
       setBdtAmount(transactionToEdit.bdtAmount.toString());
       setNote(transactionToEdit.note ?? '');
       
@@ -73,6 +76,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
     if (!date.trim()) newErrors.date = 'Date is required.';
 
+    if (paymentMethod === 'Bank' && !bankAccount) {
+      newErrors.bankAccount = 'Bank Account is required.';
+    }
+
     if (isUsdTransaction) {
         const uAmount = parseFloat(usdAmount);
         const uRate = parseFloat(usdRate);
@@ -105,12 +112,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     }
     
     if (isUsdTransaction) {
-        const payload = {
+        const payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'> = {
             date, type, paymentMethod,
             usdAmount: parseFloat(usdAmount),
             usdRate: parseFloat(usdRate),
             bdtCharge: parseFloat(bdtCharge) || 0,
             bdtAmount: calculatedBdtAmount,
+            ...(paymentMethod === 'Bank' && { bankAccount }),
         };
         if (isEditing) {
             onUpdateTransaction({ ...payload, id: transactionToEdit.id });
@@ -122,6 +130,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             date, type, paymentMethod,
             bdtAmount: parseFloat(bdtAmount),
             note: (type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW) && note.trim() ? note.trim() : undefined,
+            ...(paymentMethod === 'Bank' && { bankAccount }),
         };
         if (isEditing) {
             onUpdateTransaction({ ...payload, id: transactionToEdit.id });
@@ -135,6 +144,18 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, field: keyof typeof errors) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setter(e.target.value);
+      if (errors[field]) {
+          setErrors(prev => ({...prev, [field]: ''}));
+      }
+  };
+
+  const handleSelectChange = (setter: React.Dispatch<React.SetStateAction<string>>, field: keyof typeof errors) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { value } = e.target;
+      setter(value);
+      if (field === 'paymentMethod' && value !== 'Bank') {
+          setBankAccount('');
+          if(errors.bankAccount) setErrors(prev => ({...prev, bankAccount: ''}));
+      }
       if (errors[field]) {
           setErrors(prev => ({...prev, [field]: ''}));
       }
@@ -155,9 +176,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               {Object.values(TransactionType).map(t => <option key={t} value={t}>{t}</option>)}
             </SelectField>
           </div>
-          <SelectField label="Payment Method" value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+          <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
             {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
           </SelectField>
+
+          {isBankTransaction && (
+            <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
+              <option value="" disabled>Select a bank</option>
+              {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+            </SelectField>
+          )}
           
           {isUsdTransaction ? (
             <>
@@ -220,12 +248,13 @@ const TextAreaField: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> 
     </div>
 );
 
-const SelectField: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string }> = ({ label, children, ...props }) => (
+const SelectField: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string, error?: string }> = ({ label, children, error, ...props }) => (
     <div>
         <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-        <select {...props} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500">
+        <select {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`}>
             {children}
         </select>
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
 );
 

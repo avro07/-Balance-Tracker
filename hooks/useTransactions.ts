@@ -1,18 +1,19 @@
 
 
+
 import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { PAYMENT_METHODS } from '../constants';
+import { BANK_ACCOUNTS, PAYMENT_METHODS } from '../constants';
 import { deserializeTransactionsForSharing } from '../utils/sharing';
 
 // Demo data for initial setup
 const getDemoData = (): Transaction[] => [
-  { id: '1', date: '2025-10-06', type: TransactionType.BUY, paymentMethod: 'Bank', usdAmount: 100, usdRate: 115.50, bdtCharge: 231, bdtAmount: 11781 },
+  { id: '1', date: '2025-10-06', type: TransactionType.BUY, paymentMethod: 'Bank', bankAccount: 'City Bank', usdAmount: 100, usdRate: 115.50, bdtCharge: 231, bdtAmount: 11781 },
   { id: '2', date: '2025-10-07', type: TransactionType.DEPOSIT, paymentMethod: 'Cash', bdtAmount: 50000, note: 'Initial capital injection.' },
   { id: '3', date: '2025-10-08', type: TransactionType.SELL, paymentMethod: 'bKash', usdAmount: 50, usdRate: 116.00, bdtCharge: 116, bdtAmount: 5916 },
-  { id: '4', date: getTodayDateString(), type: TransactionType.BUY, paymentMethod: 'Bank', usdAmount: 200, usdRate: 115.80, bdtCharge: 347.4, bdtAmount: 23507.4 },
+  { id: '4', date: getTodayDateString(), type: TransactionType.BUY, paymentMethod: 'Bank', bankAccount: 'Eastern Bank', usdAmount: 200, usdRate: 115.80, bdtCharge: 347.4, bdtAmount: 23507.4 },
 ];
 
 const getTodayDateString = (): string => new Date().toISOString().split('T')[0];
@@ -123,6 +124,11 @@ export const useTransactions = () => {
         initialBalanceByMethod[method] = 0;
     });
 
+    const initialBalanceByBank: { [key: string]: number } = {};
+    BANK_ACCOUNTS.forEach(bank => {
+        initialBalanceByBank[bank] = 0;
+    });
+
     return transactionsSource.reduce((acc, tx) => {
       acc.totalTransactions += 1;
       const method = tx.paymentMethod;
@@ -137,6 +143,9 @@ export const useTransactions = () => {
         acc.bdtBalance -= tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
         acc.bdtBalanceByMethod[method] -= tx.bdtAmount;
+        if (tx.paymentMethod === 'Bank' && tx.bankAccount) {
+            acc.bdtBalanceByBank[tx.bankAccount] = (acc.bdtBalanceByBank[tx.bankAccount] || 0) - tx.bdtAmount;
+        }
       } else if (tx.type === TransactionType.SELL) {
         const usdAmount = tx.usdAmount || 0;
         acc.usdBalance -= usdAmount;
@@ -144,12 +153,21 @@ export const useTransactions = () => {
         acc.bdtBalance += tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
         acc.bdtBalanceByMethod[method] += tx.bdtAmount;
+         if (tx.paymentMethod === 'Bank' && tx.bankAccount) {
+            acc.bdtBalanceByBank[tx.bankAccount] = (acc.bdtBalanceByBank[tx.bankAccount] || 0) + tx.bdtAmount;
+        }
       } else if (tx.type === TransactionType.DEPOSIT) {
         acc.bdtBalance += tx.bdtAmount;
         acc.bdtBalanceByMethod[method] += tx.bdtAmount;
+         if (tx.paymentMethod === 'Bank' && tx.bankAccount) {
+            acc.bdtBalanceByBank[tx.bankAccount] = (acc.bdtBalanceByBank[tx.bankAccount] || 0) + tx.bdtAmount;
+        }
       } else if (tx.type === TransactionType.WITHDRAW) {
         acc.bdtBalance -= tx.bdtAmount;
         acc.bdtBalanceByMethod[method] -= tx.bdtAmount;
+         if (tx.paymentMethod === 'Bank' && tx.bankAccount) {
+            acc.bdtBalanceByBank[tx.bankAccount] = (acc.bdtBalanceByBank[tx.bankAccount] || 0) - tx.bdtAmount;
+        }
       }
 
       return acc;
@@ -161,6 +179,7 @@ export const useTransactions = () => {
       totalChargesBdt: 0,
       totalTransactions: 0,
       bdtBalanceByMethod: initialBalanceByMethod,
+      bdtBalanceByBank: initialBalanceByBank,
     });
   }, [transactionsSource]);
 
