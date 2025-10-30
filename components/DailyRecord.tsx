@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 // FIX: Import DailySummary to be used in the props interface.
 import { Transaction, TransactionType, DailySummary } from '../types';
 import { formatCurrency, getTodayDateString, formatRate } from '../utils/formatting';
-import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from './Icons';
+import { ArrowLeftIcon, ArrowRightIcon, InfoIcon } from './Icons';
 import PaymentMethodIcon from './PaymentMethodIcon';
 
 interface DailyRecordProps {
@@ -12,12 +12,47 @@ interface DailyRecordProps {
   getDailySummary: (date: string) => DailySummary;
 }
 
-const StatChip: React.FC<{ label: string; value: string; color: string }> = ({ label, value, color }) => (
-    <div className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 ${color}`}>
-        <span>{label}:</span>
-        <span className="font-bold">{value}</span>
-    </div>
-);
+const DailySummaryPopup: React.FC<{
+  summary: any;
+  date: string;
+  onClose: () => void;
+}> = ({ summary, date, onClose }) => {
+    const profitColor = summary.profit >= 0 ? 'text-green-600' : 'text-red-500';
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-40 flex items-center justify-center p-4" onClick={onClose}>
+            <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl shadow-xl w-full max-w-xs border border-slate-200/60" onClick={e => e.stopPropagation()}>
+                <div className="p-4 border-b border-slate-200 flex justify-between items-center">
+                    <h3 className="font-semibold text-slate-700">Daily Summary</h3>
+                    <p className="text-sm text-slate-500">{new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</p>
+                </div>
+                <ul className="p-4 space-y-3 text-sm text-slate-600">
+                    <li className="flex justify-between items-center">
+                        <span>Avg. Buy Rate</span>
+                        <span className="font-bold text-slate-800">{formatCurrency(summary.avgBuyRate, 'BDT', 2)}</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                        <span>Avg. Sell Rate</span>
+                        <span className="font-bold text-slate-800">{formatCurrency(summary.avgSellRate, 'BDT', 2)}</span>
+                    </li>
+                     <li className="flex justify-between items-center pt-2 border-t border-slate-100">
+                        <span>Total Buy</span>
+                        <span className="font-bold text-slate-800">{formatCurrency(summary.totalBuyBDT)}</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                        <span>Total Sell</span>
+                        <span className="font-bold text-slate-800">{formatCurrency(summary.totalSellBDT)}</span>
+                    </li>
+                </ul>
+                <div className="p-4 border-t border-slate-200 bg-slate-50/50 rounded-b-xl flex justify-between items-center">
+                     <h4 className="font-semibold text-slate-700">Profit</h4>
+                     <span className={`font-bold text-lg ${profitColor}`}>{formatCurrency(summary.profit)}</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transaction: tx }) => {
     const typeClasses = {
@@ -105,6 +140,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
 
 const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary }) => {
     const [selectedDate, setSelectedDate] = useState(getTodayDateString());
+    const [isSummaryPopupOpen, setIsSummaryPopupOpen] = useState(false);
 
     const dailyTransactions = useMemo(() => {
         return transactions.filter(tx => tx.date === selectedDate);
@@ -146,8 +182,6 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
         setSelectedDate(currentDate.toISOString().split('T')[0]);
     };
 
-    const profitColor = dailySummary.profit >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-
     return (
         <div>
             <div className="bg-gradient-to-br from-sky-50 to-white p-4 rounded-xl shadow-sm border border-slate-200/80">
@@ -165,16 +199,13 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
                         <button onClick={() => navigateDate(1)} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
                             <ArrowRightIcon />
                         </button>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 mb-6">
-                    <StatChip label="Buy Rate" value={formatCurrency(dailySummary.avgBuyRate, 'BDT', 2)} color="bg-green-100 text-green-800" />
-                    <StatChip label="Sell Rate" value={formatCurrency(dailySummary.avgSellRate, 'BDT', 2)} color="bg-orange-100 text-orange-800" />
-                    <StatChip label="Buy" value={formatCurrency(dailySummary.totalBuyBDT)} color="bg-purple-100 text-purple-800" />
-                    <StatChip label="Sell" value={formatCurrency(dailySummary.totalSellBDT)} color="bg-yellow-100 text-yellow-800" />
-                    <div className="col-span-2 sm:col-auto">
-                      <StatChip label="Profit" value={formatCurrency(dailySummary.profit)} color={profitColor} />
+                        <button
+                            onClick={() => setIsSummaryPopupOpen(true)}
+                            aria-label="Show daily summary"
+                            className="p-2 rounded-full text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors"
+                        >
+                            <InfoIcon />
+                        </button>
                     </div>
                 </div>
                 
@@ -190,6 +221,14 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
                     </div>
                 )}
             </div>
+            
+            {isSummaryPopupOpen && (
+                <DailySummaryPopup
+                    summary={dailySummary}
+                    date={selectedDate}
+                    onClose={() => setIsSummaryPopupOpen(false)}
+                />
+            )}
         </div>
     );
 };
