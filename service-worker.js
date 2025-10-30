@@ -1,10 +1,10 @@
-const CACHE_NAME = 'bdt-usd-tracker-cache-v1';
+const CACHE_NAME = 'bdt-usd-tracker-cache-v2';
 const APP_SHELL_URLS = [
   '/',
   '/index.html',
   '/index.tsx',
   '/manifest.webmanifest',
-  '/rs-nexus-logo.png',
+  '/rs-nexus-logo.png?v=2',
 ];
 
 // On install, cache the app shell
