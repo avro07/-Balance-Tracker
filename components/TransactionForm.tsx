@@ -176,16 +176,23 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               {Object.values(TransactionType).map(t => <option key={t} value={t}>{t}</option>)}
             </SelectField>
           </div>
-          <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
-            {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
-          </SelectField>
 
-          {isBankTransaction && (
-            <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
-              <option value="" disabled>Select a bank</option>
-              {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
-            </SelectField>
-          )}
+          <div className="flex items-start gap-4">
+            <div className={isBankTransaction ? 'w-1/2' : 'w-full'}>
+              <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
+                {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
+              </SelectField>
+            </div>
+            
+            {isBankTransaction && (
+              <div className="w-1/2">
+                <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
+                  <option value="" disabled>Select a bank</option>
+                  {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+                </SelectField>
+              </div>
+            )}
+          </div>
           
           {isUsdTransaction ? (
             <>
