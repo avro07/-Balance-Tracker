@@ -11,14 +11,14 @@ interface BalanceByMethodModalProps {
 
 const BalanceByMethodModal: React.FC<BalanceByMethodModalProps> = ({ balances, onClose, onShowBankDetails }) => {
   const totalBalance = useMemo(() => {
-    return Object.values(balances).reduce((sum, current) => sum + current, 0);
+    // FIX: Explicitly typed the accumulator and current value in the reduce function to solve a type inference issue.
+    return Object.values(balances).reduce((sum: number, current: number) => sum + current, 0);
   }, [balances]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-gradient-to-br from-green-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60" onClick={e => e.stopPropagation()}>
         <div className="p-5">
-          <h2 className="text-lg text-center font-semibold text-slate-800 font-tiro-bangla mb-4">ওয়ালেট অনুযায়ী ব্যালেন্স</h2>
           <BalanceByMethod
             balances={balances}
             onMethodClick={(method) => {
