@@ -127,6 +127,10 @@ export const useTransactions = () => {
         initialBalanceByBank[bank] = 0;
     });
 
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
     return transactionsSource.reduce((acc, tx) => {
       acc.totalTransactions += 1;
       const method = tx.paymentMethod;
@@ -134,6 +138,9 @@ export const useTransactions = () => {
           acc.bdtBalanceByMethod[method] = 0;
       }
       
+      const txDate = new Date(tx.date + 'T00:00:00'); // Use local timezone for comparison
+      const isCurrentMonth = txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+
       if (tx.type === TransactionType.TRANSFER) {
         // A transfer has a net zero effect on the total BDT balance
         // but moves funds between methods/accounts.
@@ -160,7 +167,9 @@ export const useTransactions = () => {
       } else if (tx.type === TransactionType.BUY) {
         const usdAmount = tx.usdAmount || 0;
         acc.usdBalance += usdAmount;
-        acc.totalBuy += usdAmount;
+        if (isCurrentMonth) {
+            acc.totalBuy += usdAmount;
+        }
         acc.bdtBalance -= tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
         acc.bdtBalanceByMethod[method] -= tx.bdtAmount;
@@ -170,7 +179,9 @@ export const useTransactions = () => {
       } else if (tx.type === TransactionType.SELL) {
         const usdAmount = tx.usdAmount || 0;
         acc.usdBalance -= usdAmount;
-        acc.totalSell += usdAmount;
+        if (isCurrentMonth) {
+            acc.totalSell += usdAmount;
+        }
         acc.bdtBalance += tx.bdtAmount;
         acc.totalChargesBdt += tx.bdtCharge || 0;
         acc.bdtBalanceByMethod[method] += tx.bdtAmount;
