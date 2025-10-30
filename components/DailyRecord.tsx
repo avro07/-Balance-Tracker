@@ -25,9 +25,11 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
         [TransactionType.SELL]: { bg: 'bg-red-100', text: 'text-red-800', label: 'Sell', gradient: 'bg-gradient-to-br from-red-50 to-white' },
         [TransactionType.DEPOSIT]: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Deposit', gradient: 'bg-gradient-to-br from-blue-50 to-white' },
         [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Withdraw', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
+        [TransactionType.TRANSFER]: { bg: 'bg-cyan-100', text: 'text-cyan-800', label: 'Transfer', gradient: 'bg-gradient-to-br from-cyan-50 to-white' },
     };
     const details = typeClasses[tx.type];
     const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
+    const isTransfer = tx.type === TransactionType.TRANSFER;
     const bdtChargeAmount = isUsdTransaction ? tx.bdtCharge || 0 : 0;
 
     return (
@@ -54,23 +56,45 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
                         </div>
                     </>
                 )}
-                <div className="flex justify-between">
-                    <span className="text-slate-500">Charge:</span>
-                    <span className="font-semibold text-slate-900">{formatCurrency(bdtChargeAmount)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Payment:</span>
-                    <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                        <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
-                        {tx.paymentMethod}
-                    </span>
-                </div>
+                
+                {isTransfer ? (
+                    <>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-500">From:</span>
+                            <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                                <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
+                                <span>{tx.bankAccount}</span>
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-500">To:</span>
+                             <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                                <PaymentMethodIcon method={tx.toPaymentMethod || ''} className="w-4 h-4" />
+                                <span>{tx.toPaymentMethod === 'Bank' && tx.toBankAccount ? tx.toBankAccount : tx.toPaymentMethod}</span>
+                            </span>
+                        </div>
+                     </>
+                ) : (
+                    <>
+                        <div className="flex justify-between">
+                            <span className="text-slate-500">Charge:</span>
+                            <span className="font-semibold text-slate-900">{formatCurrency(bdtChargeAmount)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-500">Payment:</span>
+                            <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                                <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
+                                <span>{tx.paymentMethod === 'Bank' && tx.bankAccount ? tx.bankAccount : tx.paymentMethod}</span>
+                            </span>
+                        </div>
+                    </>
+                )}
             </div>
             
             {/* Footer */}
             <div className="mt-4 pt-3 border-t border-slate-100">
                 <p className="text-base font-bold text-slate-800 flex justify-between items-center">
-                    <span>BDT Amount:</span>
+                    <span>{isTransfer ? 'Amount:' : 'BDT Amount:'}</span>
                     <span className="text-indigo-600 text-lg">{formatCurrency(tx.bdtAmount)}</span>
                 </p>
             </div>

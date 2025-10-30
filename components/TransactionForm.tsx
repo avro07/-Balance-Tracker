@@ -22,25 +22,33 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   const [bdtAmount, setBdtAmount] = useState('');
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // State for Transfer type
+  const [toPaymentMethod, setToPaymentMethod] = useState('Bank');
+  const [toBankAccount, setToBankAccount] = useState('');
   
   const isEditing = !!transactionToEdit;
   const isUsdTransaction = type === TransactionType.BUY || type === TransactionType.SELL;
   const isBankTransaction = paymentMethod === 'Bank';
+  const isTransfer = type === TransactionType.TRANSFER;
 
   useEffect(() => {
     if (isEditing && transactionToEdit) {
+      const { type: txType } = transactionToEdit;
       setDate(transactionToEdit.date);
-      setType(transactionToEdit.type);
+      setType(txType);
       setPaymentMethod(transactionToEdit.paymentMethod);
       setBankAccount(transactionToEdit.bankAccount ?? '');
       setBdtAmount(transactionToEdit.bdtAmount.toString());
       setNote(transactionToEdit.note ?? '');
       
-      const isInitialTypeUsd = transactionToEdit.type === TransactionType.BUY || transactionToEdit.type === TransactionType.SELL;
-      if (isInitialTypeUsd) {
+      if (txType === TransactionType.BUY || txType === TransactionType.SELL) {
           setUsdAmount(transactionToEdit.usdAmount?.toString() ?? '');
           setUsdRate(transactionToEdit.usdRate?.toString() ?? '');
           setBdtCharge(transactionToEdit.bdtCharge?.toString() ?? '0');
+      } else if (txType === TransactionType.TRANSFER) {
+          setToPaymentMethod(transactionToEdit.toPaymentMethod ?? 'Bank');
+          setToBankAccount(transactionToEdit.toBankAccount ?? '');
       } else {
           setUsdAmount('');
           setUsdRate('');
@@ -61,13 +69,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     setType(newType);
     setErrors({}); // Clear errors on type change
     setNote(''); // Clear note on type change
+    setBdtAmount('');
     const isNewTypeUsd = newType === TransactionType.BUY || newType === TransactionType.SELL;
     if (!isNewTypeUsd) {
       setUsdAmount('');
       setUsdRate('');
       setBdtCharge('0');
-    } else {
-      setBdtAmount('');
     }
   };
 
@@ -76,11 +83,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
     if (!date.trim()) newErrors.date = 'Date is required.';
 
-    if (paymentMethod === 'Bank' && !bankAccount) {
-      newErrors.bankAccount = 'Bank Account is required.';
-    }
-
-    if (isUsdTransaction) {
+    if (isTransfer) {
+        if (!bankAccount) newErrors.bankAccount = 'Source bank is required.';
+        if (toPaymentMethod === 'Bank' && !toBankAccount) {
+            newErrors.toBankAccount = 'Destination bank is required.';
+        }
+        if (bankAccount && toPaymentMethod === 'Bank' && toBankAccount && bankAccount === toBankAccount) {
+          newErrors.toBankAccount = 'Destination cannot be the same as the source.';
+        }
+        const bAmount = parseFloat(bdtAmount);
+        if (!bdtAmount.trim()) newErrors.bdtAmount = 'Amount is required.';
+        else if (isNaN(bAmount) || bAmount <= 0) newErrors.bdtAmount = 'Must be a positive number.';
+    } else if (isUsdTransaction) {
+        if (paymentMethod === 'Bank' && !bankAccount) {
+            newErrors.bankAccount = 'Bank Account is required.';
+        }
         const uAmount = parseFloat(usdAmount);
         const uRate = parseFloat(usdRate);
         const bCharge = parseFloat(bdtCharge);
@@ -94,6 +111,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
         if (!bdtCharge.trim()) newErrors.bdtCharge = 'BDT Charge is required.';
         else if (isNaN(bCharge) || bCharge < 0) newErrors.bdtCharge = 'Cannot be negative.';
     } else { // Deposit or Withdraw
+        if (paymentMethod === 'Bank' && !bankAccount) {
+            newErrors.bankAccount = 'Bank Account is required.';
+        }
         const bAmount = parseFloat(bdtAmount);
         if (!bdtAmount.trim()) newErrors.bdtAmount = 'BDT Amount is required.';
         else if (isNaN(bAmount) || bAmount <= 0) newErrors.bdtAmount = 'Must be a positive number.';
@@ -106,37 +126,43 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
     
-    if (!validate()) {
-      return;
-    }
-    
-    if (isUsdTransaction) {
-        const payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'> = {
+    let payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'>;
+
+    if (isTransfer) {
+        payload = {
+            date, type,
+            paymentMethod: 'Bank', // 'from' is always Bank for transfers
+            bankAccount, // 'from' bank account
+            toPaymentMethod,
+            toBankAccount: toPaymentMethod === 'Bank' ? toBankAccount : undefined,
+            bdtAmount: parseFloat(bdtAmount),
+            note: note.trim() ? note.trim() : undefined,
+        };
+    } else if (isUsdTransaction) {
+        payload = {
             date, type, paymentMethod,
             usdAmount: parseFloat(usdAmount),
             usdRate: parseFloat(usdRate),
             bdtCharge: parseFloat(bdtCharge) || 0,
             bdtAmount: calculatedBdtAmount,
+            note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
         };
-        if (isEditing) {
-            onUpdateTransaction({ ...payload, id: transactionToEdit.id });
-        } else {
-            onAddTransaction(payload);
-        }
-    } else {
-        const payload: Omit<Transaction, 'id' | 'runningBdtBalance' | 'runningUsdBalance'> = {
+    } else { // Deposit or Withdraw
+        payload = {
             date, type, paymentMethod,
             bdtAmount: parseFloat(bdtAmount),
-            note: (type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW) && note.trim() ? note.trim() : undefined,
+            note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
         };
-        if (isEditing) {
-            onUpdateTransaction({ ...payload, id: transactionToEdit.id });
-        } else {
-            onAddTransaction(payload);
-        }
+    }
+    
+    if (isEditing) {
+        onUpdateTransaction({ ...payload, id: transactionToEdit.id });
+    } else {
+        onAddTransaction(payload);
     }
     
     onClose();
@@ -156,6 +182,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           setBankAccount('');
           if(errors.bankAccount) setErrors(prev => ({...prev, bankAccount: ''}));
       }
+       if (field === 'toPaymentMethod' && value !== 'Bank') {
+          setToBankAccount('');
+          if(errors.toBankAccount) setErrors(prev => ({...prev, toBankAccount: ''}));
+      }
       if (errors[field]) {
           setErrors(prev => ({...prev, [field]: ''}));
       }
@@ -166,7 +196,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-gradient-to-br from-rose-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60">
         <div className="p-5 border-b border-rose-200/60 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{isEditing ? 'Edit Transaction' : 'New Transaction'}</h2>
+          <h2 className="text-lg font-semibold">{isEditing ? 'Edit' : 'New'} {isTransfer ? 'Transfer' : 'Transaction'}</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100"><CloseIcon /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
@@ -176,62 +206,91 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               {Object.values(TransactionType).map(t => <option key={t} value={t}>{t}</option>)}
             </SelectField>
           </div>
-
-          <div className="flex items-start gap-4">
-            <div className={isBankTransaction ? 'w-1/2' : 'w-full'}>
-              <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
-                {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
-              </SelectField>
-            </div>
-            
-            {isBankTransaction && (
-              <div className="w-1/2">
-                <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
-                  <option value="" disabled>Select a bank</option>
-                  {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
-                </SelectField>
-              </div>
-            )}
-          </div>
           
-          {isUsdTransaction ? (
+          {isTransfer ? (
             <>
+              <InputField label="Amount (BDT)" type="number" placeholder="e.g., 5000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount}/>
+              <SelectField label="From Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
+                <option value="" disabled>Select a source bank</option>
+                {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+              </SelectField>
+              <div className="flex items-start gap-4">
+                <div className={toPaymentMethod === 'Bank' ? 'w-1/2' : 'w-full'}>
+                  <SelectField label="To Destination" value={toPaymentMethod} onChange={handleSelectChange(setToPaymentMethod, 'toPaymentMethod')}>
+                    <option value="Bank">Bank</option>
+                    <option value="bKash">bKash</option>
+                  </SelectField>
+                </div>
+                {toPaymentMethod === 'Bank' && (
+                  <div className="w-1/2">
+                    <SelectField label="To Bank Account" value={toBankAccount} onChange={handleSelectChange(setToBankAccount, 'toBankAccount')} error={errors.toBankAccount}>
+                      <option value="" disabled>Select a destination bank</option>
+                      {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+                    </SelectField>
+                  </div>
+                )}
+              </div>
+              <TextAreaField label="Note (Optional)" placeholder="e.g., Monthly transfer" value={note} onChange={e => setNote(e.target.value)} rows={2} />
+            </>
+          ) : isUsdTransaction ? (
+            <>
+              <div className="flex items-start gap-4">
+                <div className={isBankTransaction ? 'w-1/2' : 'w-full'}>
+                  <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
+                    {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
+                  </SelectField>
+                </div>
+                {isBankTransaction && (
+                  <div className="w-1/2">
+                    <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
+                      <option value="" disabled>Select a bank</option>
+                      {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+                    </SelectField>
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <InputField label="USD Amount" type="number" placeholder="e.g., 100" value={usdAmount} onChange={handleInputChange(setUsdAmount, 'usdAmount')} required error={errors.usdAmount}/>
                 <InputField label="USD Rate" type="number" placeholder="e.g., 115.50" value={usdRate} onChange={handleInputChange(setUsdRate, 'usdRate')} required step="any" error={errors.usdRate} />
               </div>
-              <div className="grid grid-cols-2 gap-4 items-end">
-                <InputField label="BDT Charge" type="number" placeholder="e.g., 250" value={bdtCharge} onChange={handleInputChange(setBdtCharge, 'bdtCharge')} step="any" error={errors.bdtCharge} />
-                <div>
-                  <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 w-full">
-                    {isEditing ? 'Update Transaction' : 'Add Transaction'}
-                  </button>
-                </div>
-              </div>
+               <InputField label="BDT Charge" type="number" placeholder="e.g., 250" value={bdtCharge} onChange={handleInputChange(setBdtCharge, 'bdtCharge')} step="any" error={errors.bdtCharge} />
               <div className="bg-gradient-to-br from-sky-50 to-white p-3 rounded-lg text-center border border-slate-200/60 shadow-sm">
                   <p className="text-sm text-slate-500">Calculated BDT Amount</p>
                   <p className="font-bold text-lg text-slate-800">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
               </div>
             </>
-          ) : (
+          ) : ( // Deposit or Withdraw
             <>
+               <div className="flex items-start gap-4">
+                <div className={isBankTransaction ? 'w-1/2' : 'w-full'}>
+                  <SelectField label="Payment Method" value={paymentMethod} onChange={handleSelectChange(setPaymentMethod, 'paymentMethod')}>
+                    {PAYMENT_METHODS.map(p => <option key={p} value={p}>{p}</option>)}
+                  </SelectField>
+                </div>
+                {isBankTransaction && (
+                  <div className="w-1/2">
+                    <SelectField label="Bank Account" value={bankAccount} onChange={handleSelectChange(setBankAccount, 'bankAccount')} error={errors.bankAccount}>
+                      <option value="" disabled>Select a bank</option>
+                      {BANK_ACCOUNTS.map(b => <option key={b} value={b}>{b}</option>)}
+                    </SelectField>
+                  </div>
+                )}
+              </div>
               <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
-              {(type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW) && (
-                <TextAreaField
-                  label="Note (Optional)"
-                  placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
-                  value={note}
-                  onChange={e => setNote(e.target.value)}
-                  rows={2}
-                />
-              )}
+              <TextAreaField
+                label="Note (Optional)"
+                placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
+                value={note}
+                onChange={e => setNote(e.target.value)}
+                rows={2}
+              />
             </>
           )}
 
-          <div className="flex justify-end gap-3 pt-4">
-            {!isUsdTransaction && (
-                <button type="submit" className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">{isEditing ? 'Update Transaction' : 'Add Transaction'}</button>
-            )}
+          <div className="flex justify-end pt-4">
+            <button type="submit" className="w-full py-2.5 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">
+                {isEditing ? 'Update' : 'Add'} {isTransfer ? 'Transfer' : 'Transaction'}
+            </button>
           </div>
         </form>
       </div>

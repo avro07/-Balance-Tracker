@@ -1,7 +1,7 @@
 import React from 'react';
 import { Transaction, TransactionType } from '../types';
 import { formatCurrency } from '../utils/formatting';
-import { BuyIcon, SellIcon, DepositIcon, WithdrawIcon, EditIcon, DeleteIcon } from './Icons';
+import { BuyIcon, SellIcon, DepositIcon, WithdrawIcon, EditIcon, DeleteIcon, TransferIcon } from './Icons';
 import PaymentMethodIcon from './PaymentMethodIcon';
 
 interface TransactionListProps {
@@ -18,6 +18,7 @@ const typeDetails = {
   [TransactionType.SELL]: { icon: <SellIcon />, color: 'bg-rose-100 text-rose-600', sign: '+', gradient: 'bg-gradient-to-br from-rose-50 to-white' },
   [TransactionType.DEPOSIT]: { icon: <DepositIcon />, color: 'bg-green-100 text-green-600', sign: '+', gradient: 'bg-gradient-to-br from-green-50 to-white' },
   [TransactionType.WITHDRAW]: { icon: <WithdrawIcon />, color: 'bg-amber-100 text-amber-600', sign: '-', gradient: 'bg-gradient-to-br from-amber-50 to-white' },
+  [TransactionType.TRANSFER]: { icon: <TransferIcon />, color: 'bg-cyan-100 text-cyan-600', sign: '', gradient: 'bg-gradient-to-br from-cyan-50 to-white' },
 };
 
 interface TransactionItemProps {
@@ -31,6 +32,7 @@ interface TransactionItemProps {
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete, isAdmin }) => {
   const details = typeDetails[tx.type];
   const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
+  const isTransfer = tx.type === TransactionType.TRANSFER;
 
   return (
     <li className={`p-4 rounded-xl shadow-sm border border-slate-200/80 flex items-start gap-4 ${details.gradient}`}>
@@ -40,7 +42,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
       <div className="flex-grow">
         <div className="flex justify-between items-start">
           <span className="font-semibold text-slate-800">{tx.type}</span>
-          <span className={`font-bold ${details.sign === '+' ? 'text-green-600' : 'text-red-500'}`}>
+          <span className={`font-bold ${isTransfer ? 'text-slate-800' : (details.sign === '+' ? 'text-green-600' : 'text-red-500')}`}>
             {details.sign} {formatCurrency(tx.bdtAmount)}
           </span>
         </div>
@@ -59,10 +61,17 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
                     {formatCurrency(tx.usdAmount || 0, 'USD')} @ {tx.usdRate?.toFixed(2)} (+{formatCurrency(tx.bdtCharge || 0, 'BDT')} charge)
                 </p>
             )}
+             {isTransfer && (
+                <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                    {tx.bankAccount}
+                    <span className="font-sans mx-1">→</span>
+                    {tx.toPaymentMethod === 'Bank' ? tx.toBankAccount : tx.toPaymentMethod}
+                </p>
+            )}
           </div>
         </div>
 
-        {(tx.type === TransactionType.DEPOSIT || tx.type === TransactionType.WITHDRAW) && tx.note && (
+        {tx.note && (
             <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
                 <p><strong className="font-medium text-slate-500">Note:</strong> {tx.note}</p>
             </div>

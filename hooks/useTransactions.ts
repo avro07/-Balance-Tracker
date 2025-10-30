@@ -1,6 +1,3 @@
-
-
-
 import { useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
@@ -14,6 +11,7 @@ const getDemoData = (): Transaction[] => [
   { id: '2', date: '2025-10-07', type: TransactionType.DEPOSIT, paymentMethod: 'Cash', bdtAmount: 50000, note: 'Initial capital injection.' },
   { id: '3', date: '2025-10-08', type: TransactionType.SELL, paymentMethod: 'bKash', usdAmount: 50, usdRate: 116.00, bdtCharge: 116, bdtAmount: 5916 },
   { id: '4', date: getTodayDateString(), type: TransactionType.BUY, paymentMethod: 'Bank', bankAccount: 'Eastern Bank', usdAmount: 200, usdRate: 115.80, bdtCharge: 347.4, bdtAmount: 23507.4 },
+  { id: '5', date: getTodayDateString(), type: TransactionType.TRANSFER, paymentMethod: 'Bank', bankAccount: 'City Bank', toPaymentMethod: 'bKash', bdtAmount: 5000, note: 'Personal transfer' },
 ];
 
 const getTodayDateString = (): string => new Date().toISOString().split('T')[0];
@@ -136,7 +134,30 @@ export const useTransactions = () => {
           acc.bdtBalanceByMethod[method] = 0;
       }
       
-      if (tx.type === TransactionType.BUY) {
+      if (tx.type === TransactionType.TRANSFER) {
+        // A transfer has a net zero effect on the total BDT balance
+        // but moves funds between methods/accounts.
+        const fromMethod = tx.paymentMethod;
+        const toMethod = tx.toPaymentMethod;
+
+        // Decrease from source
+        if (acc.bdtBalanceByMethod[fromMethod] !== undefined) {
+          acc.bdtBalanceByMethod[fromMethod] -= tx.bdtAmount;
+        }
+        if (fromMethod === 'Bank' && tx.bankAccount) {
+          acc.bdtBalanceByBank[tx.bankAccount] = (acc.bdtBalanceByBank[tx.bankAccount] || 0) - tx.bdtAmount;
+        }
+        
+        // Increase at destination
+        if (toMethod) {
+          if (acc.bdtBalanceByMethod[toMethod] === undefined) acc.bdtBalanceByMethod[toMethod] = 0;
+          acc.bdtBalanceByMethod[toMethod] += tx.bdtAmount;
+          
+          if (toMethod === 'Bank' && tx.toBankAccount) {
+            acc.bdtBalanceByBank[tx.toBankAccount] = (acc.bdtBalanceByBank[tx.toBankAccount] || 0) + tx.bdtAmount;
+          }
+        }
+      } else if (tx.type === TransactionType.BUY) {
         const usdAmount = tx.usdAmount || 0;
         acc.usdBalance += usdAmount;
         acc.totalBuy += usdAmount;

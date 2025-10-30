@@ -3,14 +3,17 @@ export enum TransactionType {
   SELL = 'Sell',
   DEPOSIT = 'Deposit',
   WITHDRAW = 'Withdraw',
+  TRANSFER = 'Transfer',
 }
 
 export interface Transaction {
   id: string;
   date: string; // YYYY-MM-DD
   type: TransactionType;
-  paymentMethod: string;
-  bankAccount?: string;
+  paymentMethod: string; // For Transfer, this is the 'from' method
+  bankAccount?: string; // For Transfer, this is the 'from' bank account
+  toPaymentMethod?: string;
+  toBankAccount?: string;
   usdAmount?: number;
   usdRate?: number;
   bdtCharge?: number;
