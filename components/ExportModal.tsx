@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Transaction } from '../types';
 import { downloadCSV } from '../utils/csv';
 import { getTodayDateString } from '../utils/formatting';
-import { CloseIcon, DownloadIcon } from './Icons';
+import { DownloadIcon } from './Icons';
 
 interface ExportModalProps {
   transactions: Transaction[];
@@ -31,11 +31,10 @@ const ExportModal: React.FC<ExportModalProps> = ({ transactions, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-indigo-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60">
-        <div className="p-5 border-b border-indigo-200/60 flex justify-between items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-gradient-to-br from-indigo-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60" onClick={e => e.stopPropagation()}>
+        <div className="p-5 border-b border-indigo-200/60">
           <h2 className="text-lg font-semibold">Export Transactions</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100"><CloseIcon /></button>
         </div>
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -46,9 +45,9 @@ const ExportModal: React.FC<ExportModalProps> = ({ transactions, onClose }) => {
             <p className="text-sm text-slate-500">Records found in range</p>
             <p className="font-bold text-lg text-indigo-600">{filteredTransactions.length}</p>
           </div>
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Cancel</button>
-            <button 
+        </div>
+        <div className="p-5 border-t border-indigo-200/60 flex justify-center">
+            <button
               onClick={handleExport}
               disabled={filteredTransactions.length === 0}
               className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 flex items-center gap-2 disabled:bg-indigo-300 disabled:cursor-not-allowed"
@@ -56,7 +55,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ transactions, onClose }) => {
               <DownloadIcon />
               <span>Download CSV</span>
             </button>
-          </div>
         </div>
       </div>
     </div>

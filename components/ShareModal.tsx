@@ -38,13 +38,10 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-xl w-full max-w-lg border border-slate-200/60">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-xl w-full max-w-lg border border-slate-200/60" onClick={e => e.stopPropagation()}>
         <div className="p-5 border-b border-blue-200/60 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Share Transactions Link</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100">
-            <CloseIcon />
-          </button>
         </div>
         <div className="p-5 space-y-4">
           <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-md font-tiro-bangla">
@@ -77,15 +74,6 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
                 <span>{copied ? 'Copied!' : 'Copy'}</span>
               </button>
             )}
-          </div>
-          <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200"
-            >
-              Close
-            </button>
           </div>
         </div>
       </div>
