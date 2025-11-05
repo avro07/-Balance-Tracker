@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 // FIX: Import DailySummary to be used in the props interface.
 import { Transaction, TransactionType, DailySummary } from '../types';
@@ -187,7 +188,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
             <div className="bg-gradient-to-br from-sky-50 to-white p-4 rounded-xl shadow-sm border border-slate-200/80">
                 <div className="flex items-center justify-center mb-4">
                     <div className="relative flex items-center gap-2">
-                         <button onClick={() => navigateDate(-1)} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+                         <button onClick={() => navigateDate(-1)} className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors">
                             <ArrowLeftIcon />
                         </button>
                         <input
@@ -196,7 +197,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
                             onChange={handleDateChange}
                             className="font-semibold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
-                        <button onClick={() => navigateDate(1)} className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+                        <button onClick={() => navigateDate(1)} className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors">
                             <ArrowRightIcon />
                         </button>
                         <button

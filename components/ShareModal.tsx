@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { CloseIcon, CopyIcon, ShareIcon } from './Icons';
 
@@ -41,7 +42,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-xl w-full max-w-lg border border-slate-200/60" onClick={e => e.stopPropagation()}>
         <div className="p-5 border-b border-blue-200/60 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Share Transactions Link</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Share Transactions Link</h2>
         </div>
         <div className="p-5 space-y-4">
           <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-md font-tiro-bangla">
@@ -54,7 +55,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
               type="text"
               value={link}
               readOnly
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-slate-50 text-slate-700 border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onFocus={(e) => e.target.select()}
             />
             {canShare ? (

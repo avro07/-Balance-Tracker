@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import { Transaction } from '../types';
 import { downloadCSV } from '../utils/csv';
@@ -34,7 +35,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ transactions, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-gradient-to-br from-indigo-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60" onClick={e => e.stopPropagation()}>
         <div className="p-5 border-b border-indigo-200/60">
-          <h2 className="text-lg font-semibold">Export Transactions</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Export Transactions</h2>
         </div>
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">

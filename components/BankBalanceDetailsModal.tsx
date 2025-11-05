@@ -17,7 +17,7 @@ const BankBalanceDetailsModal: React.FC<BankBalanceDetailsModalProps> = ({ balan
       <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60">
         <div className="p-5 border-b border-blue-200/60 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-slate-800">Bank Account Balances</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100"><CloseIcon /></button>
+          <button onClick={onClose} className="p-1 rounded-full text-slate-500 hover:bg-slate-100"><CloseIcon /></button>
         </div>
         <div className="p-5">
           {sortedBalances.length > 0 ? (

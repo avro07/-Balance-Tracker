@@ -107,7 +107,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
 const FilterInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
   <input
     {...props}
-    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+    className="w-full px-3 py-2 bg-white text-slate-800 border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
   />
 );
 
@@ -136,7 +136,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
           {transactions.map(tx => <TransactionItem key={tx.id} transaction={tx} onEdit={onEditTransaction} onDelete={onDeleteTransaction} isAdmin={isAdmin} />)}
         </ul>
       ) : (
-        <div className="text-center py-10 px-4 bg-white rounded-lg shadow-sm">
+        <div className="text-center py-10 px-4 bg-white rounded-lg shadow-sm border border-slate-200/80">
             <p className="text-slate-500">No transactions found.</p>
             <p className="text-sm text-slate-400">Try adjusting your filters or add a new transaction.</p>
         </div>
