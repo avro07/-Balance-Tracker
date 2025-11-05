@@ -6,6 +6,7 @@ import TransactionList from './components/TransactionList';
 import TransactionForm from './components/TransactionForm';
 import ExportModal from './components/ExportModal';
 import ShareModal from './components/ShareModal';
+import ShareOptionsMenu from './components/ShareOptionsMenu';
 import { AddIcon, ExportIcon, ShareIcon } from './components/Icons';
 import { useAuth } from './contexts/AuthContext';
 import { serializeTransactionsForSharing } from './utils/sharing';
@@ -23,6 +24,7 @@ const App: React.FC = () => {
   const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isShareOptionsOpen, setIsShareOptionsOpen] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   
@@ -66,7 +68,7 @@ const App: React.FC = () => {
     setIsTransactionFormOpen(false);
   };
 
-  const handleOpenShareModal = () => {
+  const handleOpenShareReadOnlyModal = () => {
     if (!isAdmin) return;
     try {
       const rawTransactionsJson = window.localStorage.getItem('transactions');
@@ -80,10 +82,8 @@ const App: React.FC = () => {
         return;
       }
 
-      // Serialize transactions into a compact format to shorten the URL
       const compactData = serializeTransactionsForSharing(transactionsToShare);
       
-      // A robust way to Base64-encode a Unicode string using TextEncoder.
       const unicodeBtoa = (str: string) => {
         const encoder = new TextEncoder();
         const uint8array = encoder.encode(str);
@@ -98,6 +98,7 @@ const App: React.FC = () => {
       const link = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
       
       setShareableLink(link);
+      setIsShareOptionsOpen(false);
       setIsShareModalOpen(true);
     } catch (e) {
       console.error("Error generating shareable link:", e);
@@ -105,6 +106,13 @@ const App: React.FC = () => {
     }
   };
 
+  const handleOpenShareAdminModal = () => {
+    if (!isAdmin) return;
+    const adminLink = `${window.location.origin}${window.location.pathname}?mode=admin`;
+    setShareableLink(adminLink);
+    setIsShareOptionsOpen(false);
+    setIsShareModalOpen(true);
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800 transition-colors duration-300">
@@ -143,6 +151,14 @@ const App: React.FC = () => {
           onClose={() => setIsExportModalOpen(false)}
         />
       )}
+      
+      {isShareOptionsOpen && (
+        <ShareOptionsMenu
+          onClose={() => setIsShareOptionsOpen(false)}
+          onShareReadOnly={handleOpenShareReadOnlyModal}
+          onShareAdmin={handleOpenShareAdminModal}
+        />
+      )}
 
       {isShareModalOpen && (
         <ShareModal
@@ -173,7 +189,7 @@ const App: React.FC = () => {
             </button>
 
             <button
-              onClick={handleOpenShareModal}
+              onClick={() => setIsShareOptionsOpen(true)}
               aria-label="Share Transactions"
               className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
