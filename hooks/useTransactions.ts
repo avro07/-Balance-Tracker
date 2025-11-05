@@ -32,8 +32,19 @@ export const useTransactions = () => {
 
     if (sharedData) {
       try {
+        // A robust way to decode a Base64-encoded Unicode string using TextDecoder.
+        const unicodeAtob = (b64: string) => {
+            const binStr = atob(b64);
+            const uint8array = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) {
+                uint8array[i] = binStr.charCodeAt(i);
+            }
+            const decoder = new TextDecoder();
+            return decoder.decode(uint8array);
+        };
+
         // Decode and deserialize the transaction data from the URL.
-        const jsonString = atob(decodeURIComponent(sharedData));
+        const jsonString = unicodeAtob(decodeURIComponent(sharedData));
         // The deserialization function handles both new compact and old object formats.
         const parsedTransactions = deserializeTransactionsForSharing(jsonString);
         if (Array.isArray(parsedTransactions)) {

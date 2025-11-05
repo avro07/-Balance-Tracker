@@ -82,7 +82,19 @@ const App: React.FC = () => {
 
       // Serialize transactions into a compact format to shorten the URL
       const compactData = serializeTransactionsForSharing(transactionsToShare);
-      const encodedData = encodeURIComponent(btoa(compactData));
+      
+      // A robust way to Base64-encode a Unicode string using TextEncoder.
+      const unicodeBtoa = (str: string) => {
+        const encoder = new TextEncoder();
+        const uint8array = encoder.encode(str);
+        let binStr = '';
+        uint8array.forEach((byte) => {
+            binStr += String.fromCharCode(byte);
+        });
+        return btoa(binStr);
+      };
+
+      const encodedData = encodeURIComponent(unicodeBtoa(compactData));
       const link = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
       
       setShareableLink(link);
