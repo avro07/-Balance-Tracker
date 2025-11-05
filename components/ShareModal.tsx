@@ -45,7 +45,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
           <h2 className="text-lg font-semibold text-slate-800">Share Transactions Link</h2>
         </div>
         <div className="p-5 space-y-4">
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-md font-tiro-bangla">
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-md font-hind-siliguri">
             <p className="text-sm text-amber-800">
               <strong>গুরুত্বপূর্ণ:</strong> এই লিঙ্কটি বর্তমান ডেটার একটি স্ন্যাপশট। আপনি লেনদেন যোগ, সম্পাদনা বা মুছে ফেললে, অন্যদের পরিবর্তনগুলি দেখানোর জন্য আপনাকে অবশ্যই একটি <strong>নতুন লিঙ্ক</strong> তৈরি এবং শেয়ার করতে হবে।
             </p>

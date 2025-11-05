@@ -97,7 +97,7 @@ const App: React.FC = () => {
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800 transition-colors duration-300">
       <div className="p-4 sm:p-6">
-        <header className="bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl py-4 sm:py-5">
+        <header className="bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl py-4 sm:py-5 border border-slate-200/60">
             <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-bold text-indigo-900 text-shadow-custom">আর.এস নেক্সাস লিমিটেড</h1>
         </header>
       </div>
@@ -142,7 +142,7 @@ const App: React.FC = () => {
       {/* Bottom Action Bar - Only for Admins */}
       {isAdmin && (
         <div className="fixed bottom-4 left-4 right-4 z-10">
-          <div className="max-w-md mx-auto flex justify-center items-center gap-3 bg-gradient-to-br from-sky-50 to-white shadow-lg rounded-xl p-2 border border-slate-200/60">
+          <div className="max-w-md mx-auto flex justify-center items-center gap-3 bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl p-2 border border-slate-200/60">
             <button
               onClick={() => setIsExportModalOpen(true)}
               aria-label="Export Transactions"

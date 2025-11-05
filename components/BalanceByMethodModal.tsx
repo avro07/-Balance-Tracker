@@ -30,7 +30,7 @@ const BalanceByMethodModal: React.FC<BalanceByMethodModalProps> = ({ balances, o
           />
         </div>
         <div className="p-5 border-t border-green-200/60 flex justify-between items-center bg-green-50/50 rounded-b-lg">
-          <h3 className="font-semibold text-slate-700 font-tiro-bangla">মোট বিডিটি ব্যালেন্স</h3>
+          <h3 className="font-semibold text-slate-700 font-hind-siliguri">মোট বিডিটি ব্যালেন্স</h3>
           <span className={`font-bold text-xl ${totalBalance >= 0 ? 'text-green-700' : 'text-red-600'}`}>
             {formatCurrency(totalBalance)}
           </span>
