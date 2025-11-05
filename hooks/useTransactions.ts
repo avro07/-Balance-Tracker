@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Transaction, TransactionType, DailySummary, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -20,8 +20,39 @@ export const useTransactions = () => {
   const { isAdmin } = useAuth();
   const [storedTransactions, setStoredTransactions] = useLocalStorage<Transaction[]>('transactions', getDemoData());
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedData = params.get('data');
+
+    if (sharedData && isAdmin) {
+      try {
+        const unicodeAtob = (b64: string) => {
+            const binStr = atob(b64);
+            const uint8array = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) {
+                uint8array[i] = binStr.charCodeAt(i);
+            }
+            const decoder = new TextDecoder();
+            return decoder.decode(uint8array);
+        };
+        
+        const jsonString = unicodeAtob(decodeURIComponent(sharedData));
+        const parsedTransactions = deserializeTransactionsForSharing(jsonString);
+
+        if (Array.isArray(parsedTransactions)) {
+          setStoredTransactions(parsedTransactions);
+          const newUrl = `${window.location.origin}${window.location.pathname}?mode=admin`;
+          window.history.replaceState({}, document.title, newUrl);
+        }
+      } catch (e) {
+        console.error("Failed to parse and import shared admin data:", e);
+        alert("Could not load data from the shared link. It might be invalid or corrupted.");
+      }
+    }
+  }, [isAdmin, setStoredTransactions]);
+
   const transactionsSource = useMemo(() => {
-    // Admins always use localStorage.
+    // Admins always use localStorage. If data was imported from URL, it's now in storedTransactions.
     if (isAdmin) {
       return storedTransactions;
     }

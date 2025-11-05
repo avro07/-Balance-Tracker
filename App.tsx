@@ -108,10 +108,40 @@ const App: React.FC = () => {
 
   const handleOpenShareAdminModal = () => {
     if (!isAdmin) return;
-    const adminLink = `${window.location.origin}${window.location.pathname}?mode=admin`;
-    setShareableLink(adminLink);
-    setIsShareOptionsOpen(false);
-    setIsShareModalOpen(true);
+    try {
+      const rawTransactionsJson = window.localStorage.getItem('transactions');
+      if (!rawTransactionsJson) {
+        alert("No transactions to share.");
+        return;
+      }
+      const transactionsToShare = JSON.parse(rawTransactionsJson);
+      if (transactionsToShare.length === 0) {
+        alert("No transactions to share.");
+        return;
+      }
+
+      const compactData = serializeTransactionsForSharing(transactionsToShare);
+      
+      const unicodeBtoa = (str: string) => {
+        const encoder = new TextEncoder();
+        const uint8array = encoder.encode(str);
+        let binStr = '';
+        uint8array.forEach((byte) => {
+            binStr += String.fromCharCode(byte);
+        });
+        return btoa(binStr);
+      };
+
+      const encodedData = encodeURIComponent(unicodeBtoa(compactData));
+      const link = `${window.location.origin}${window.location.pathname}?mode=admin&data=${encodedData}`;
+      
+      setShareableLink(link);
+      setIsShareOptionsOpen(false);
+      setIsShareModalOpen(true);
+    } catch (e) {
+      console.error("Error generating shareable admin link:", e);
+      alert("Could not generate shareable link. The data might be too large.");
+    }
   };
 
   return (
