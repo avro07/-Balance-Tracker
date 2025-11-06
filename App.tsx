@@ -233,7 +233,7 @@ const App: React.FC = () => {
             <button
               onClick={handleOpenAddForm}
               aria-label="New Transaction"
-              className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+              className="pulse-ring-button w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
             >
               <AddIcon className="w-7 h-7" />
             </button>
