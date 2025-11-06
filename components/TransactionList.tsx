@@ -124,7 +124,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
       <div className="mb-4 p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm">
         <FilterInput
           type="search"
-          placeholder="Search by Date, Amount (USD), or Rate..."
+          placeholder="Search transactions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />

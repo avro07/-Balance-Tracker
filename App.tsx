@@ -43,11 +43,31 @@ const App: React.FC = () => {
     return transactions.filter(tx => {
       const isUsdTx = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
       
-      const dateMatch = tx.date.includes(query);
-      const amountMatch = isUsdTx && (tx.usdAmount ?? 0).toString().startsWith(query);
-      const rateMatch = isUsdTx && (tx.usdRate ?? 0).toString().startsWith(query);
+      // Match against various fields.
+      // For numbers, use startsWith for a better experience.
+      // For text, use includes for partial matching.
       
-      return dateMatch || amountMatch || rateMatch;
+      if (tx.date.includes(query)) return true;
+      if (tx.type.toLowerCase().includes(query)) return true;
+      if (tx.paymentMethod.toLowerCase().includes(query)) return true;
+      if (tx.bankAccount?.toLowerCase().includes(query)) return true;
+      if (tx.bdtAmount.toString().startsWith(query)) return true;
+      if ((tx.bdtCharge ?? 0).toString().startsWith(query)) return true;
+      if (tx.note?.toLowerCase().includes(query)) return true;
+      
+      // For USD-specific fields
+      if (isUsdTx) {
+        if ((tx.usdAmount ?? 0).toString().startsWith(query)) return true;
+        if ((tx.usdRate ?? 0).toString().startsWith(query)) return true;
+      }
+
+      // For Transfer-specific fields
+      if (tx.type === TransactionType.TRANSFER) {
+        if (tx.toPaymentMethod?.toLowerCase().includes(query)) return true;
+        if (tx.toBankAccount?.toLowerCase().includes(query)) return true;
+      }
+      
+      return false;
     });
   }, [transactions, searchQuery]);
 
