@@ -3,6 +3,21 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 
+// Splash screen logic
+window.addEventListener('load', () => {
+  const splash = document.getElementById('splash-screen');
+  // Hide splash screen after a delay to show the animation
+  setTimeout(() => {
+    if (splash) {
+      splash.classList.add('hidden');
+      // Remove from DOM after transition to prevent it from interfering
+      setTimeout(() => {
+        splash.remove();
+      }, 750); // This duration should match the CSS transition time
+    }
+  }, 2500); // 2.5 seconds total display time
+});
+
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
