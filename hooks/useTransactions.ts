@@ -14,7 +14,13 @@ const getDemoData = (): Transaction[] => [
   { id: '5', date: getTodayDateString(), type: TransactionType.TRANSFER, paymentMethod: 'Bank', bankAccount: 'City Bank', toPaymentMethod: 'bKash', bdtAmount: 5000, note: 'Personal transfer' },
 ];
 
-const getTodayDateString = (): string => new Date().toISOString().split('T')[0];
+const getTodayDateString = (): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const useTransactions = () => {
   const { isAdmin } = useAuth();

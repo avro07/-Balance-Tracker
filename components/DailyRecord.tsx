@@ -178,9 +178,19 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions, getDailySummary
     };
     
     const navigateDate = (offset: number) => {
-        const currentDate = new Date(selectedDate + 'T00:00:00'); // Avoid timezone issues by setting time
+        const [year, month, day] = selectedDate.split('-').map(Number);
+        // Create a date object in the local timezone. Month is 0-indexed.
+        const currentDate = new Date(year, month - 1, day);
+        
+        // setDate correctly handles month/year rollovers
         currentDate.setDate(currentDate.getDate() + offset);
-        setSelectedDate(currentDate.toISOString().split('T')[0]);
+        
+        // Format back to YYYY-MM-DD string
+        const nextYear = currentDate.getFullYear();
+        const nextMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const nextDay = String(currentDate.getDate()).padStart(2, '0');
+        
+        setSelectedDate(`${nextYear}-${nextMonth}-${nextDay}`);
     };
 
     return (
