@@ -168,7 +168,7 @@ const App: React.FC = () => {
     <div className="bg-slate-50 min-h-screen font-sans text-slate-800 transition-colors duration-300">
       <div className="p-4 sm:p-6">
         <header className="bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl py-4 sm:py-5 border border-slate-200/60">
-            <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-indigo-900 text-shadow-custom">আর.এস নেক্সাস লিমিটেড</h1>
+            <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
         </header>
       </div>
 
