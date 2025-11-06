@@ -72,33 +72,33 @@
         animation: gradient-flow 10s ease infinite;
       }
 
-      /* Splash Screen */
+      /* --- Splash Screen --- */
       #splash-screen {
         position: fixed;
         inset: 0;
-        z-index: 9999;
+        background-color: #111111; /* Premium Black */
         display: flex;
-        align-items: center;
         justify-content: center;
-        background: linear-gradient(to bottom right, #eff6ff, #ffffff); /* from-blue-50 to-white */
-        transition: opacity 0.5s ease-out;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.75s ease-out;
       }
-      .loader {
-        width: 48px;
-        height: 48px;
-        border: 5px solid #c7d2fe; /* indigo-200 */
-        border-bottom-color: #4f46e5; /* indigo-600 */
-        border-radius: 50%;
-        display: inline-block;
-        box-sizing: border-box;
-        animation: rotation 1s linear infinite;
+      #splash-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
       }
-      @keyframes rotation {
-        0% {
-          transform: rotate(0deg);
+      .splash-logo {
+        width: 120px;
+        animation: pulse-logo 2.5s infinite ease-in-out;
+      }
+      @keyframes pulse-logo {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 0.9;
         }
-        100% {
-          transform: rotate(360deg);
+        50% {
+          transform: scale(1.08);
+          opacity: 1;
         }
       }
     </style>
@@ -114,7 +114,7 @@
 </head>
   <body>
     <div id="splash-screen">
-      <div class="loader"></div>
+      <img src="https://zroos.com/wp-content/uploads/ar.png" alt="Loading Logo" class="splash-logo" />
     </div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
