@@ -220,7 +220,7 @@ const App: React.FC = () => {
       {/* Bottom Action Bar - Only for Admins */}
       {isAdmin && (
         <div className="fixed bottom-4 left-4 right-4 z-10">
-          <div className="max-w-md mx-auto flex justify-center items-center gap-3 bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl p-2 border border-slate-200/60">
+          <div className="max-w-md mx-auto flex justify-center items-center gap-3">
             <button
               onClick={() => setIsExportModalOpen(true)}
               aria-label="Export Transactions"
