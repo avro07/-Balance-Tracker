@@ -165,90 +165,92 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen font-sans text-slate-800 transition-colors duration-300">
-      <div className="p-4 sm:p-6">
-        <header className="bg-gradient-to-br from-blue-50 to-white shadow-lg shadow-blue-500/20 rounded-xl py-4 sm:py-5 border border-slate-200/60">
+    <div className="bg-gradient-to-br from-blue-50 to-white min-h-screen font-sans text-slate-800 transition-colors duration-300">
+      <div className="px-4 sm:px-6 pb-4 sm:pb-6 header-container-safe-area">
+        <header className="bg-transparent shadow-lg shadow-blue-500/20 rounded-xl py-4 sm:py-5 border border-slate-200/60">
             <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
         </header>
       </div>
-
-      <main className="px-4 pb-24">
-        <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} isAdmin={isAdmin} />
-        <div className="mt-8">
-          <TransactionList
-            transactions={filteredTransactions}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            onEditTransaction={handleOpenEditForm}
-            onDeleteTransaction={deleteTransaction}
-            isAdmin={isAdmin}
-          />
-        </div>
-      </main>
       
-      {isTransactionFormOpen && (
-        <TransactionForm
-          onClose={handleCloseForm}
-          onAddTransaction={addTransaction}
-          onUpdateTransaction={updateTransaction}
-          transactionToEdit={editingTransaction}
-        />
-      )}
-
-      {isExportModalOpen && (
-        <ExportModal
-          transactions={transactions}
-          onClose={() => setIsExportModalOpen(false)}
-        />
-      )}
-      
-      {isShareOptionsOpen && (
-        <ShareOptionsMenu
-          onClose={() => setIsShareOptionsOpen(false)}
-          onShareReadOnly={handleOpenShareReadOnlyModal}
-          onShareAdmin={handleOpenShareAdminModal}
-        />
-      )}
-
-      {isShareModalOpen && (
-        <ShareModal
-          link={shareableLink}
-          onClose={() => setIsShareModalOpen(false)}
-        />
-      )}
-
-      {/* Bottom Action Bar - Only for Admins */}
-      {isAdmin && (
-        <div className="fixed bottom-4 left-4 right-4 z-10">
-          <div className="max-w-md mx-auto flex justify-center items-center gap-3">
-            <button
-              onClick={() => setIsExportModalOpen(true)}
-              aria-label="Export Transactions"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-sky-500 to-blue-500 text-white font-semibold rounded-lg shadow-md shadow-sky-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <ExportIcon />
-              <span>Export</span>
-            </button>
-            
-            <button
-              onClick={handleOpenAddForm}
-              aria-label="New Transaction"
-              className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
-            >
-              <AddIcon className="w-7 h-7 animate-plus-icon" />
-            </button>
-
-            <button
-              onClick={() => setIsShareOptionsOpen(true)}
-              aria-label="Share Transactions"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-            >
-              <ShareIcon />
-              <span>Share</span>
-            </button>
+      <div className="bg-slate-50">
+        <main className="px-4 pt-4 sm:pt-6 pb-24">
+          <Dashboard summaries={summaries} getDailySummary={getDailySummary} transactions={transactions} isAdmin={isAdmin} />
+          <div className="mt-8">
+            <TransactionList
+              transactions={filteredTransactions}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onEditTransaction={handleOpenEditForm}
+              onDeleteTransaction={deleteTransaction}
+              isAdmin={isAdmin}
+            />
           </div>
-        </div>
-      )}
+        </main>
+        
+        {isTransactionFormOpen && (
+          <TransactionForm
+            onClose={handleCloseForm}
+            onAddTransaction={addTransaction}
+            onUpdateTransaction={updateTransaction}
+            transactionToEdit={editingTransaction}
+          />
+        )}
+
+        {isExportModalOpen && (
+          <ExportModal
+            transactions={transactions}
+            onClose={() => setIsExportModalOpen(false)}
+          />
+        )}
+        
+        {isShareOptionsOpen && (
+          <ShareOptionsMenu
+            onClose={() => setIsShareOptionsOpen(false)}
+            onShareReadOnly={handleOpenShareReadOnlyModal}
+            onShareAdmin={handleOpenShareAdminModal}
+          />
+        )}
+
+        {isShareModalOpen && (
+          <ShareModal
+            link={shareableLink}
+            onClose={() => setIsShareModalOpen(false)}
+          />
+        )}
+
+        {/* Bottom Action Bar - Only for Admins */}
+        {isAdmin && (
+          <div className="fixed bottom-4 left-4 right-4 z-10">
+            <div className="max-w-md mx-auto flex justify-center items-center gap-3">
+              <button
+                onClick={() => setIsExportModalOpen(true)}
+                aria-label="Export Transactions"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-sky-500 to-blue-500 text-white font-semibold rounded-lg shadow-md shadow-sky-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <ExportIcon />
+                <span>Export</span>
+              </button>
+              
+              <button
+                onClick={handleOpenAddForm}
+                aria-label="New Transaction"
+                className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+              >
+                <AddIcon className="w-7 h-7 animate-plus-icon" />
+              </button>
+
+              <button
+                onClick={() => setIsShareOptionsOpen(true)}
+                aria-label="Share Transactions"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              >
+                <ShareIcon />
+                <span>Share</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
