@@ -1,7 +1,7 @@
 import React from 'react';
 import { GlobalSummaries } from '../types';
 import { formatCurrency } from '../utils/formatting';
-import { UsdIcon, BuyIcon, SellIcon, ChargeIcon, TransactionIcon } from './Icons';
+import { BuyIcon, SellIcon, ChargeIcon, TransactionIcon } from './Icons';
 
 interface SummaryCardsProps {
     summaries: GlobalSummaries;
@@ -15,23 +15,30 @@ const SummaryCard: React.FC<{
   backgroundIcon: React.ReactElement;
   gradientClass: string;
   iconClass: string;
+  colSpan?: string;
   onClick?: () => void;
-}> = ({ title, value, backgroundIcon, gradientClass, iconClass, onClick }) => (
+}> = ({ title, value, backgroundIcon, gradientClass, iconClass, colSpan, onClick }) => {
+    
+  // Safe extraction of existing className to prevent runtime errors
+  const iconProps = (backgroundIcon as React.ReactElement<{ className?: string }>).props;
+  const existingIconClass = iconProps?.className || '';
+
+  return (
   <div
     onClick={onClick}
-    className={`relative p-4 rounded-2xl shadow-sm overflow-hidden border border-black/5 dark:border-white/5 transition-transform duration-300 ${gradientClass} ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''}`}
+    className={`relative p-4 sm:p-5 rounded-2xl shadow-sm border border-black/5 dark:border-white/5 transition-all duration-300 ${gradientClass} ${colSpan || ''} ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''} flex items-center justify-between overflow-hidden`}
   >
-    <div className="relative z-10 pr-12">
-      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{title}</p>
-      <p className="text-xl sm:text-2xl font-bold mt-1 text-slate-900 dark:text-slate-50 break-words font-hind-siliguri leading-tight">{value}</p>
+    <div className="relative z-10 flex-1 min-w-0 mr-2">
+      <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 tracking-wide">{title}</p>
+      <p className="text-xl sm:text-2xl font-bold mt-1 text-slate-900 dark:text-slate-50 truncate font-hind-siliguri leading-tight tracking-tight" title={value}>{value}</p>
     </div>
-    <div className={`absolute right-3 top-1/2 -translate-y-1/2 select-none pointer-events-none ${iconClass}`}>
+    <div className={`flex-shrink-0 relative z-0 ${iconClass} opacity-90`}>
       {React.cloneElement(backgroundIcon as React.ReactElement<{ className?: string }>, { 
-        className: `${(backgroundIcon as React.ReactElement<{ className?: string }>).props.className || ''} w-12 h-12 flex items-center justify-center` 
+        className: `${existingIconClass} w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center` 
       })}
     </div>
   </div>
-);
+)};
 
 
 const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries, isAdmin, onBdtBalanceClick }) => {
@@ -39,17 +46,19 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries, isAdmin, onBdtBa
         { 
             title: 'BDT Balance',
             value: formatCurrency(summaries.bdtBalance), 
-            backgroundIcon: <span className="font-black leading-none" style={{fontSize: '2.25rem'}}>৳</span>,
+            backgroundIcon: <span className="font-bold leading-none flex items-center justify-center" style={{fontSize: '3.5rem'}}>৳</span>,
             gradientClass: 'bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-slate-900/20',
             iconClass: 'text-green-600/40 dark:text-green-400/40',
+            colSpan: 'col-span-2 sm:col-span-1', // Full width on mobile to fit large numbers
             ...(isAdmin && { onClick: onBdtBalanceClick })
         },
         { 
             title: 'USD Balance', 
             value: formatCurrency(summaries.usdBalance, 'USD'), 
-            backgroundIcon: <span className="font-black leading-none" style={{fontSize: '2.25rem'}}>$</span>,
+            backgroundIcon: <span className="font-bold leading-none flex items-center justify-center" style={{fontSize: '3.5rem'}}>$</span>,
             gradientClass: 'bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-slate-900/20',
             iconClass: 'text-blue-600/40 dark:text-blue-400/40',
+            colSpan: 'col-span-2 sm:col-span-1', // Full width on mobile
         },
         { 
             title: 'Total Buy (USD)', 
@@ -82,7 +91,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summaries, isAdmin, onBdtBa
     ];
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             {cards.map(card => <SummaryCard key={card.title} {...card} />)}
         </div>
     );
