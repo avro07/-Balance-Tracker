@@ -164,14 +164,14 @@ export const CashIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const BKashIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 24 24" className={className} xmlns="https://zroos.com/wp-content/uploads/bkash.png">
         <circle cx="12" cy="12" r="12" fill="#ED1C68"/>
         <path d="M5.5,3.5 L4,7 L8,20 L12,17 L16,12 L20,9 L17,8 L12.5,9.5 Z" fill="white" />
     </svg>
 );
 
 export const NagadIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 100 100" className={className} xmlns="https://zroos.com/wp-content/uploads/nagad.png">
         <path d="M92.5,69.3c-10.5-10.7-24-17.7-38.9-20.1C65.9,23.3,77.3,1,50,1C22.7,1,1,22.7,1,50c0,11.4,3.9,22,10.6,30.3 c-4.2-1.9-8-4.4-11.2-7.5c-4.1,8.9-6.3,18.9-6.3,29.3c0,0.1,0,0.2,0,0.3c33-1.6,63.9-16.6,86.4-40.4 C92.5,69.5,92.5,69.4,92.5,69.3z" fill="#f37622"/>
         <path d="M50,1c-1.3,0-2.5,0-3.8,0.1C23.9,2.8,4.7,23.5,2.1,47.4c-0.1,0.8-0.1,1.7-0.1,2.6c0,11.4,3.9,22,10.6,30.3 c-4.2-1.9-8-4.4-11.2-7.5c10.3,19.4,28,33.5,48.6,36.5c33-1.6,63.9-16.6,86.4-40.4c1.1-1.3,2.1-2.6,3.1-4 C117.3,34.4,86.5,1,50,1z" fill="#d7282f"/>
         <path d="M98.9,62.3c-23.5,24.8-55.7,40.1-90.1,40.1c-0.1,0-0.2,0-0.3,0c4.1,1.8,8.5,2.8,13,2.8c27.3,0,49.5-22.2,49.5-49.5 c0-11-3.6-21.2-9.7-29.5C92.9,24.1,99.8,42.5,98.9,62.3z" fill="#f37622"/>
