@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const BalanceIcon: React.FC<{ className?: string }> = ({ className = "h-6 w-6" }) => (
@@ -164,10 +163,7 @@ export const CashIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const BKashIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg viewBox="0 0 24 24" className={className} xmlns="https://zroos.com/wp-content/uploads/bkash.png">
-        <circle cx="12" cy="12" r="12" fill="#ED1C68"/>
-        <path d="M5.5,3.5 L4,7 L8,20 L12,17 L16,12 L20,9 L17,8 L12.5,9.5 Z" fill="white" />
-    </svg>
+    <img src="https://zroos.com/wp-content/uploads/bkash.png" alt="bKash" className={className} />
 );
 
 export const NagadIcon: React.FC<{ className?: string }> = ({ className }) => (
