@@ -168,7 +168,7 @@ const App: React.FC = () => {
     <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-800 min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300">
       <div className="px-3 sm:px-6 pb-2 sm:pb-4 header-container-safe-area">
         <header className="relative bg-transparent shadow-md shadow-blue-500/10 dark:shadow-blue-500/5 rounded-lg py-2 sm:py-3 border border-slate-200/60 dark:border-slate-700/60">
-            <h1 className="text-center font-hind-siliguri text-xl sm:text-2xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
+            <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
             <div className="absolute top-1/2 right-3 sm:right-4 -translate-y-1/2">
               <ThemeToggle />
             </div>
