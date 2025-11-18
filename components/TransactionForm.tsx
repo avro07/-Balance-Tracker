@@ -200,7 +200,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"><CloseIcon /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <InputField label="Date" type="date" value={date} onChange={handleInputChange(setDate, 'date')} required error={errors.date} />
             <SelectField label="Type" value={type} onChange={e => handleTypeChange(e.target.value as TransactionType)}>
               {Object.values(TransactionType).map(t => <option key={t} value={t}>{t}</option>)}
