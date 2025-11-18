@@ -9,12 +9,11 @@ import BankBalanceDetailsModal from './BankBalanceDetailsModal';
 
 interface DashboardProps {
   summaries: GlobalSummaries;
-  getDailySummary: (date: string) => DailySummary;
   transactions: Transaction[];
   isAdmin: boolean;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ summaries, getDailySummary, transactions, isAdmin }) => {
+const Dashboard: React.FC<DashboardProps> = ({ summaries, transactions, isAdmin }) => {
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isBankDetailsModalOpen, setIsBankDetailsModalOpen] = useState(false);
 
@@ -31,7 +30,7 @@ const Dashboard: React.FC<DashboardProps> = ({ summaries, getDailySummary, trans
         onBdtBalanceClick={() => setIsBalanceModalOpen(true)}
       />
       
-      <DailyRecord getDailySummary={getDailySummary} transactions={transactions} />
+      <DailyRecord transactions={transactions} />
 
       {isBalanceModalOpen && isAdmin && summaries.bdtBalanceByMethod && (
         <BalanceByMethodModal

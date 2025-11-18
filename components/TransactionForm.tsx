@@ -194,10 +194,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-rose-50 to-white rounded-lg shadow-xl w-full max-w-md border border-slate-200/60">
-        <div className="p-5 border-b border-rose-200/60 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-slate-800">{isEditing ? 'Edit' : 'New'} {isTransfer ? 'Transfer' : 'Transaction'}</h2>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-500 hover:bg-slate-100"><CloseIcon /></button>
+      <div className="bg-gradient-to-br from-rose-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-xl w-full max-w-md border border-slate-200/60 dark:border-slate-700">
+        <div className="p-5 border-b border-rose-200/60 dark:border-rose-500/20 flex justify-between items-center">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{isEditing ? 'Edit' : 'New'} {isTransfer ? 'Transfer' : 'Transaction'}</h2>
+          <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"><CloseIcon /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -256,9 +256,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                 <InputField label="USD Rate" type="number" placeholder="e.g., 115.50" value={usdRate} onChange={handleInputChange(setUsdRate, 'usdRate')} required step="any" error={errors.usdRate} />
               </div>
                <InputField label="BDT Charge" type="number" placeholder="e.g., 250" value={bdtCharge} onChange={handleInputChange(setBdtCharge, 'bdtCharge')} step="any" error={errors.bdtCharge} />
-              <div className="bg-gradient-to-br from-sky-50 to-white p-3 rounded-lg text-center border border-slate-200/60 shadow-sm">
-                  <p className="text-sm text-slate-500">Calculated BDT Amount</p>
-                  <p className="font-bold text-lg text-slate-800">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
+              <div className="bg-gradient-to-br from-sky-50 to-white dark:from-slate-700/50 dark:to-slate-800/50 p-3 rounded-lg text-center border border-slate-200/60 dark:border-slate-600 shadow-sm">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Calculated BDT Amount</p>
+                  <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
               </div>
             </>
           ) : ( // Deposit or Withdraw
@@ -290,7 +290,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
           )}
 
           <div className="flex justify-end pt-4">
-            <button type="submit" className="w-full py-2.5 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">
+            <button type="submit" className="w-full py-2.5 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
                 {isEditing ? 'Update' : 'Add'} {isTransfer ? 'Transfer' : 'Transaction'}
             </button>
           </div>
@@ -302,24 +302,24 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
 const InputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string, error?: string }> = ({ label, error, ...props }) => (
     <div>
-        <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-        <input {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
+        <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+        <input {...props} className={`w-full px-3 py-2 bg-white dark:bg-slate-700 dark:text-slate-200 border ${error ? 'border-red-500' : 'border-slate-300 dark:border-slate-600'} rounded-md text-sm shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
 );
 
 const TextAreaField: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string, error?: string }> = ({ label, error, ...props }) => (
     <div>
-        <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-        <textarea {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
+        <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+        <textarea {...props} className={`w-full px-3 py-2 bg-white dark:bg-slate-700 dark:text-slate-200 border ${error ? 'border-red-500' : 'border-slate-300 dark:border-slate-600'} rounded-md text-sm shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`} />
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
 );
 
 const SelectField: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string, error?: string }> = ({ label, children, error, ...props }) => (
     <div>
-        <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-        <select {...props} className={`w-full px-3 py-2 bg-white border ${error ? 'border-red-500' : 'border-slate-300'} rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`}>
+        <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+        <select {...props} className={`w-full px-3 py-2 bg-white dark:bg-slate-700 dark:text-slate-200 border ${error ? 'border-red-500' : 'border-slate-300 dark:border-slate-600'} rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 ${error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'}`}>
             {children}
         </select>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}

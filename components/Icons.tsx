@@ -87,7 +87,7 @@ export const DownloadIcon: React.FC<{ className?: string }> = ({ className = "h-
 
 export const BdtIcon: React.FC<{ className?: string }> = ({ className = "h-6 w-6" }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
-        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="18" fontWeight="bold">৳</text>
+        <path d="M14.5 3c-1.56 0-2.8.54-3.8 1.16c-1 .62-1.7 1.63-1.7 2.84c0 1.84 1.24 2.81 2.7 2.81c.36 0 .68-.05.95-.14c-.19.68-.29 1.4-.29 2.15v1.38H10V15.6h2.56v7.1h2.4V15.6H19.4V13.4H14.96v-1.51c0-2.02-.02-4.05-.02-5.8c0-.98.7-1.48 1.35-1.48c.62 0 1.05.38 1.15.86h2.2c-.2-1.92-1.68-3.16-3.64-3.16M12 9.04c-.74 0-1.2-.55-1.2-1.45c0-.8.42-1.4 1.11-1.4c.24 0 .48.05.63.14c-.18.8-.26 1.6-.54 2.36c-.15.06-.32.1-.4.1Z" />
     </svg>
 );
 

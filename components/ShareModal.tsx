@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { CloseIcon, CopyIcon, ShareIcon } from './Icons';
 
@@ -40,20 +38,20 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-gradient-to-br from-blue-50 to-white rounded-lg shadow-xl w-full max-w-lg border border-slate-200/60" onClick={e => e.stopPropagation()}>
+      <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-xl w-full max-w-lg border border-slate-200/60 dark:border-slate-700" onClick={e => e.stopPropagation()}>
         <div className="p-5">
           <div className="flex items-center space-x-2">
             <input
               type="text"
               value={link}
               readOnly
-              className="w-full px-3 py-2 bg-slate-50 text-slate-700 border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onFocus={(e) => e.target.select()}
             />
             {canShare ? (
               <button
                 onClick={handleShare}
-                className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 flex items-center gap-2 w-32 justify-center"
+                className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 flex items-center gap-2 w-32 justify-center"
               >
                 <ShareIcon />
                 <span>Share</span>
@@ -61,7 +59,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ link, onClose }) => {
             ) : (
               <button
                 onClick={handleCopy}
-                className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 flex items-center gap-2 w-32 justify-center"
+                className="py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 flex items-center gap-2 w-32 justify-center"
               >
                 <CopyIcon />
                 <span>{copied ? 'Copied!' : 'Copy'}</span>
