@@ -52,11 +52,11 @@ const DailySummaryPopup: React.FC<{
 
 const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transaction: tx }) => {
     const typeClasses = {
-        [TransactionType.BUY]: { bg: 'bg-green-100 dark:bg-green-500/20', text: 'text-green-800 dark:text-green-300', label: 'Buy', gradient: 'bg-gradient-to-br from-green-50 to-white dark:from-green-900/20 dark:to-slate-800/10' },
-        [TransactionType.SELL]: { bg: 'bg-red-100 dark:bg-red-500/20', text: 'text-red-800 dark:text-red-300', label: 'Sell', gradient: 'bg-gradient-to-br from-red-50 to-white dark:from-red-900/20 dark:to-slate-800/10' },
-        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100 dark:bg-blue-500/20', text: 'text-blue-800 dark:text-blue-300', label: 'Deposit', gradient: 'bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-slate-800/10' },
-        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100 dark:bg-amber-500/20', text: 'text-yellow-800 dark:text-amber-300', label: 'Withdraw', gradient: 'bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-slate-800/10' },
-        [TransactionType.TRANSFER]: { bg: 'bg-cyan-100 dark:bg-cyan-500/20', text: 'text-cyan-800 dark:text-cyan-300', label: 'Transfer', gradient: 'bg-gradient-to-br from-cyan-50 to-white dark:from-cyan-900/20 dark:to-slate-800/10' },
+        [TransactionType.BUY]: { bg: 'bg-green-100 dark:bg-green-500/10', text: 'text-green-800 dark:text-green-300', label: 'Buy', gradient: 'bg-gradient-to-br from-green-50 to-white dark:from-[#1e293b] dark:to-[#0f172a]' },
+        [TransactionType.SELL]: { bg: 'bg-red-100 dark:bg-red-500/10', text: 'text-red-800 dark:text-red-300', label: 'Sell', gradient: 'bg-gradient-to-br from-red-50 to-white dark:from-[#1e293b] dark:to-[#0f172a]' },
+        [TransactionType.DEPOSIT]: { bg: 'bg-blue-100 dark:bg-blue-500/10', text: 'text-blue-800 dark:text-blue-300', label: 'Deposit', gradient: 'bg-gradient-to-br from-blue-50 to-white dark:from-[#1e293b] dark:to-[#0f172a]' },
+        [TransactionType.WITHDRAW]: { bg: 'bg-yellow-100 dark:bg-amber-500/10', text: 'text-yellow-800 dark:text-amber-300', label: 'Withdraw', gradient: 'bg-gradient-to-br from-amber-50 to-white dark:from-[#1e293b] dark:to-[#0f172a]' },
+        [TransactionType.TRANSFER]: { bg: 'bg-cyan-100 dark:bg-cyan-500/10', text: 'text-cyan-800 dark:text-cyan-300', label: 'Transfer', gradient: 'bg-gradient-to-br from-cyan-50 to-white dark:from-[#1e293b] dark:to-[#0f172a]' },
     };
     const details = typeClasses[tx.type];
     const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
@@ -64,7 +64,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
     const bdtChargeAmount = isUsdTransaction ? tx.bdtCharge || 0 : 0;
 
     return (
-        <div className={`border border-slate-200/80 dark:border-slate-700/80 rounded-lg p-4 flex flex-col text-slate-700 dark:text-slate-300 shadow-sm h-full ${details.gradient}`}>
+        <div className={`border border-slate-200/80 dark:border-slate-800 rounded-lg p-4 flex flex-col text-slate-700 dark:text-slate-300 shadow-sm h-full ${details.gradient}`}>
             {/* Header */}
             <div className="flex justify-between items-start mb-3">
                 <span className={`text-xs font-bold px-2 py-1 rounded-full ${details.bg} ${details.text}`}>
@@ -92,14 +92,14 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
                     <>
                         <div className="flex justify-between items-center">
                             <span className="text-slate-500 dark:text-slate-400">From:</span>
-                            <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
                                 <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
                                 <span>{tx.bankAccount}</span>
                             </span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-slate-500 dark:text-slate-400">To:</span>
-                             <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
+                             <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
                                 <PaymentMethodIcon method={tx.toPaymentMethod || ''} className="w-4 h-4" />
                                 <span>{tx.toPaymentMethod === 'Bank' && tx.toBankAccount ? tx.toBankAccount : tx.toPaymentMethod}</span>
                             </span>
@@ -113,7 +113,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-slate-500 dark:text-slate-400">Payment:</span>
-                            <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
+                            <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2 py-0.5 rounded-full">
                                 <PaymentMethodIcon method={tx.paymentMethod} className="w-4 h-4" />
                                 <span>{tx.paymentMethod === 'Bank' && tx.bankAccount ? tx.bankAccount : tx.paymentMethod}</span>
                             </span>
@@ -123,7 +123,7 @@ const DailyTransactionCard: React.FC<{ transaction: Transaction }> = ({ transact
             </div>
             
             {/* Footer */}
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <p className="text-base font-bold text-slate-800 dark:text-slate-100 flex justify-between items-center">
                     <span>{isTransfer ? 'Amount:' : 'BDT Amount:'}</span>
                     <span className="text-indigo-600 dark:text-indigo-400 text-lg">{formatCurrency(tx.bdtAmount)}</span>
@@ -190,7 +190,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
 
     return (
         <div>
-            <div className="bg-gradient-to-br from-sky-50 to-white dark:from-slate-800/50 dark:to-slate-800/20 p-4 rounded-xl shadow-sm border border-slate-200/80 dark:border-slate-700/80">
+            <div className="bg-gradient-to-br from-sky-50 to-white dark:from-[#1e293b] dark:to-[#0f172a] p-4 rounded-xl shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <div className="flex items-center justify-center mb-4">
                     <div className="relative flex items-center gap-2">
                          <button onClick={() => navigateDate(-1)} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
@@ -200,7 +200,7 @@ const DailyRecord: React.FC<DailyRecordProps> = ({ transactions }) => {
                             type="date"
                             value={selectedDate}
                             onChange={handleDateChange}
-                            className="font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
                         <button onClick={() => navigateDate(1)} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                             <ArrowRightIcon />

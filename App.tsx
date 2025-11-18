@@ -165,9 +165,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-800 min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300">
+    <div className="bg-gradient-to-br from-blue-50 to-white dark:from-[#020617] dark:to-[#0f172a] min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300">
       <div className="px-3 sm:px-6 pb-2 sm:pb-4 header-container-safe-area">
-        <header className="relative bg-transparent shadow-md shadow-blue-500/10 dark:shadow-blue-500/5 rounded-lg py-2 sm:py-3 border border-slate-200/60 dark:border-slate-700/60">
+        <header className="relative bg-transparent shadow-md shadow-blue-500/10 dark:shadow-blue-900/20 rounded-lg py-2 sm:py-3 border border-slate-200/60 dark:border-slate-800">
             <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
             <div className="absolute top-1/2 right-3 sm:right-4 -translate-y-1/2">
               <ThemeToggle />
@@ -175,7 +175,7 @@ const App: React.FC = () => {
         </header>
       </div>
       
-      <div className="bg-slate-50 dark:bg-slate-900">
+      <div className="bg-slate-50 dark:bg-[#020617]">
         <main className="px-3 pt-3 sm:px-4 sm:pt-6 pb-24">
           <Dashboard summaries={summaries} transactions={transactions} isAdmin={isAdmin} />
           <div className="mt-6 sm:mt-8">
@@ -228,7 +228,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-sky-500 to-blue-500 text-white font-semibold rounded-lg shadow-md shadow-sky-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-sky-500 to-blue-500 dark:from-cyan-700 dark:to-blue-800 text-white font-semibold rounded-lg shadow-md shadow-sky-500/20 dark:shadow-cyan-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-cyan-500/30"
               >
                 <ExportIcon />
                 <span>Export</span>
@@ -237,7 +237,7 @@ const App: React.FC = () => {
               <button
                 onClick={handleOpenAddForm}
                 aria-label="New Transaction"
-                className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-slate-900"
+                className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 dark:from-orange-600 dark:to-red-700 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 dark:shadow-orange-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-orange-500/30"
               >
                 <AddIcon className="w-7 h-7 animate-plus-icon" />
               </button>
@@ -245,7 +245,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-slate-900"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-indigo-500 to-purple-500 dark:from-violet-700 dark:to-fuchsia-800 text-white font-semibold rounded-lg shadow-md shadow-indigo-500/20 dark:shadow-purple-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-purple-500/30"
               >
                 <ShareIcon />
                 <span>Share</span>
