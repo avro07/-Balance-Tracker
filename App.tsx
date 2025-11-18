@@ -228,7 +228,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="w-28 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-sky-500 to-blue-500 dark:from-cyan-700 dark:to-blue-800 text-white font-medium rounded-lg shadow-md shadow-sky-500/20 dark:shadow-cyan-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-cyan-500/30"
+                className="w-32 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-sky-500 to-blue-500 dark:from-cyan-700 dark:to-blue-800 text-white font-medium rounded-lg shadow-md shadow-sky-500/20 dark:shadow-cyan-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-cyan-500/30"
               >
                 <ExportIcon />
                 <span>Export</span>
@@ -245,7 +245,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="w-28 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-indigo-500 to-purple-500 dark:from-violet-700 dark:to-fuchsia-800 text-white font-medium rounded-lg shadow-md shadow-indigo-500/20 dark:shadow-purple-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-purple-500/30"
+                className="w-32 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-indigo-500 to-purple-500 dark:from-violet-700 dark:to-fuchsia-800 text-white font-medium rounded-lg shadow-md shadow-indigo-500/20 dark:shadow-purple-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-purple-500/30"
               >
                 <ShareIcon />
                 <span>Share</span>
