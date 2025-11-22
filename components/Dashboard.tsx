@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { DailySummary, GlobalSummaries, Transaction } from '../types';
 import SummaryCards from './SummaryCards';

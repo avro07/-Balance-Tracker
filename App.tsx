@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -11,7 +12,6 @@ import { AddIcon, ExportIcon, ShareIcon } from './components/Icons';
 import { useAuth } from './contexts/AuthContext';
 import { serializeTransactionsForSharing } from './utils/sharing';
 import ThemeToggle from './components/ThemeToggle';
-import LockScreen from './components/LockScreen';
 
 const App: React.FC = () => {
   const {
@@ -28,13 +28,6 @@ const App: React.FC = () => {
   const [isShareOptionsOpen, setIsShareOptionsOpen] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  
-  // Lock Screen State
-  // Only show lock screen if accessing via admin mode (?mode=admin)
-  const [isLocked, setIsLocked] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('mode') === 'admin';
-  });
   
   // State for new simplified search
   const [searchQuery, setSearchQuery] = useState('');
@@ -171,11 +164,6 @@ const App: React.FC = () => {
       alert("Could not generate shareable link. The data might be too large.");
     }
   };
-
-  // Render Lock Screen if locked
-  if (isLocked) {
-    return <LockScreen onUnlock={() => setIsLocked(false)} />;
-  }
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-white dark:from-[#020617] dark:to-[#0f172a] min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300">
