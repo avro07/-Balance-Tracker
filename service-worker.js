@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bdt-usd-tracker-cache-v5';
+const CACHE_NAME = 'bdt-usd-tracker-cache-v6';
 const APP_SHELL_URLS = [
   '/',
   '/index.html',
@@ -43,6 +43,11 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
     return;
   }
+
+  // Do not cache API requests to ensure fresh data from the server
+  if (event.request.url.includes('api.php')) {
+    return;
+  }
   
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) => {
@@ -57,8 +62,6 @@ self.addEventListener('fetch', (event) => {
         }).catch(err => {
             // This is to handle cases where the network is down.
             console.warn('Fetch failed; returning cached response if available.', event.request.url, err);
-            // If fetch fails and there's no cached response, it will result in an error,
-            // which is the correct behavior.
         });
 
         // Return the cached response immediately if available, and update the cache in the background.

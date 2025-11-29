@@ -1,40 +1,54 @@
-import { useMemo, useCallback, useEffect, useState } from 'react';
+
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Transaction, TransactionType, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { BANK_ACCOUNTS, PAYMENT_METHODS, API_BASE_URL } from '../constants';
 
-// NOTE: This hook now connects to an external server defined in constants.ts (API_BASE_URL).
-// Ensure your backend supports GET, POST, PUT, DELETE at the /transactions endpoint.
-
 export const useTransactions = () => {
   const { isAdmin } = useAuth();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    // Initialize from local storage immediately for speed/offline support
+    try {
+      const localData = window.localStorage.getItem('transactions');
+      return localData ? JSON.parse(localData) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch transactions from the server on mount
+  // Sync with Local Storage helper
+  const saveToLocalStorage = (data: Transaction[]) => {
+    window.localStorage.setItem('transactions', JSON.stringify(data));
+  };
+
+  // Fetch transactions from Server
   const fetchTransactions = useCallback(async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/transactions`);
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
+      // Attempt to fetch from server
+      const response = await fetch(API_BASE_URL);
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setTransactions(data);
+          saveToLocalStorage(data); // Update local backup
+          setError(null);
+        }
+      } else {
+        console.warn('Server responded with error, using local data:', response.statusText);
       }
-      const data = await response.json();
-      // Ensure date sorting
-      const sortedData = Array.isArray(data) 
-        ? data.sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        : [];
-      setTransactions(sortedData);
-      setError(null);
     } catch (err) {
-      console.error("Failed to fetch transactions:", err);
-      setError("Failed to load data from server. Please check your connection.");
+      console.warn("Server unreachable, using local data.");
+      // No need to do anything else, we already initialized from local storage
     } finally {
       setIsLoading(false);
     }
   }, []);
 
+  // Initial Load
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
@@ -42,73 +56,83 @@ export const useTransactions = () => {
   const addTransaction = useCallback(async (transactionData: Omit<Transaction, 'id'>) => {
     if (!isAdmin) return;
     
-    // Optimistic ID generation (Server might overwrite this)
     const newTransaction = {
       ...transactionData,
       id: crypto.randomUUID(),
     };
 
+    // Optimistic Update: Update UI & Local Storage immediately
+    setTransactions(prev => {
+        const updated = [newTransaction, ...prev];
+        saveToLocalStorage(updated);
+        return updated;
+    });
+
     try {
-      const response = await fetch(`${API_BASE_URL}/transactions`, {
+      const response = await fetch(API_BASE_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTransaction),
       });
 
-      if (!response.ok) throw new Error("Failed to save transaction");
-      
-      // Refresh data from server to ensure sync
-      await fetchTransactions();
+      if (!response.ok) throw new Error('Server error');
     } catch (err) {
-      console.error("Error adding transaction:", err);
-      alert("Error saving to server. Please try again.");
+      console.warn("Failed to save to server, saved locally only.");
+      // We do NOT revert state here, keeping the local data intact
+      alert("Note: Server unreachable. Transaction saved locally on this device.");
     }
-  }, [isAdmin, fetchTransactions]);
+  }, [isAdmin]);
   
   const updateTransaction = useCallback(async (updatedTransaction: Transaction) => {
     if (!isAdmin) return;
 
+    // Optimistic Update
+    setTransactions(prev => {
+        const updated = prev.map(tx => tx.id === updatedTransaction.id ? updatedTransaction : tx);
+        saveToLocalStorage(updated);
+        return updated;
+    });
+
     try {
-      const response = await fetch(`${API_BASE_URL}/transactions/${updatedTransaction.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedTransaction),
-      });
+        const response = await fetch(API_BASE_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedTransaction),
+        });
 
-      if (!response.ok) throw new Error("Failed to update transaction");
-
-      // Refresh data
-      await fetchTransactions();
+        if (!response.ok) throw new Error('Server error');
     } catch (err) {
-      console.error("Error updating transaction:", err);
-      alert("Error updating record on server.");
+        console.warn("Failed to update on server, updated locally only.");
+        alert("Note: Server unreachable. Update saved locally on this device.");
     }
-  }, [isAdmin, fetchTransactions]);
+  }, [isAdmin]);
 
   const deleteTransaction = useCallback(async (id: string) => {
     if (!isAdmin) return;
-    if (window.confirm('Are you sure you want to delete this transaction?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
-          method: 'DELETE',
+    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
+
+    // Optimistic Update
+    setTransactions(prev => {
+        const updated = prev.filter(tx => tx.id !== id);
+        saveToLocalStorage(updated);
+        return updated;
+    });
+
+    try {
+        const response = await fetch(API_BASE_URL, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
         });
 
-        if (!response.ok) throw new Error("Failed to delete transaction");
-
-        // Refresh data
-        await fetchTransactions();
-      } catch (err) {
-        console.error("Error deleting transaction:", err);
-        alert("Error deleting record from server.");
-      }
+        if (!response.ok) throw new Error('Server error');
+    } catch (err) {
+        console.warn("Failed to delete from server, deleted locally only.");
+        alert("Note: Server unreachable. Deleted locally on this device.");
     }
-  }, [isAdmin, fetchTransactions]);
+  }, [isAdmin]);
 
-  // Calculate Running Balances (Client-side logic preserved)
+  // Calculate Running Balances
   const transactionsWithRunningBalance = useMemo(() => {
     const sorted = [...transactions].sort((a, b) => {
         const dateA = new Date(a.date).getTime();
@@ -161,10 +185,11 @@ export const useTransactions = () => {
     return transactions.reduce((acc, tx) => {
       acc.totalTransactions += 1;
       const method = tx.paymentMethod;
+      
       if (acc.bdtBalanceByMethod[method] === undefined) {
           acc.bdtBalanceByMethod[method] = 0;
       }
-      
+
       if (tx.type === TransactionType.TRANSFER) {
         const fromMethod = tx.paymentMethod;
         const toMethod = tx.toPaymentMethod;
