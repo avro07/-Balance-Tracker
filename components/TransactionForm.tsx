@@ -246,6 +246,64 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
       }
   };
 
+  const getNotePlaceholder = () => {
+    switch(type) {
+        case TransactionType.DEPOSIT: return "e.g., Initial capital";
+        case TransactionType.WITHDRAW: return "e.g., Office expenses";
+        case TransactionType.TRANSFER: return "e.g., Monthly transfer";
+        case TransactionType.BUY: return "e.g., Payment for USD";
+        case TransactionType.SELL: return "e.g., Sold USD to Client";
+        default: return "e.g., Description";
+    }
+  };
+
+  const renderNoteAndScreenshot = () => (
+    <div className="flex gap-2">
+        <div className="flex-grow">
+        <TextAreaField
+            label="Note (Optional)"
+            placeholder={getNotePlaceholder()}
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            rows={2}
+        />
+        </div>
+        <div className="flex flex-col justify-end pb-1">
+        <input 
+            type="file" 
+            accept="image/*" 
+            className="hidden" 
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+        />
+        <div className="relative">
+            {screenshot ? (
+                <div className="relative group">
+                    <img src={screenshot} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-300 dark:border-slate-600" />
+                    <button 
+                        type="button" 
+                        onClick={clearScreenshot}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600"
+                    >
+                        <CloseIcon className="w-3 h-3 text-white" />
+                    </button>
+                </div>
+            ) : (
+                    <button 
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    title="Upload Screenshot"
+                >
+                    <CameraIcon className="w-6 h-6 mb-1" />
+                    <span className="text-[10px]">Photo</span>
+                </button>
+            )}
+        </div>
+        </div>
+    </div>
+  );
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -287,7 +345,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                   </div>
                 )}
               </div>
-              <TextAreaField label="Note (Optional)" placeholder="e.g., Monthly transfer" value={note} onChange={e => setNote(e.target.value)} rows={2} />
+              
+              {renderNoteAndScreenshot()}
             </>
           ) : isUsdTransaction ? (
             <>
@@ -315,6 +374,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                   <p className="text-sm text-slate-500 dark:text-slate-400">Calculated BDT Amount</p>
                   <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{calculatedBdtAmount.toLocaleString('en-IN', { style: 'currency', currency: 'BDT', minimumFractionDigits: 2 })}</p>
               </div>
+
+              {renderNoteAndScreenshot()}
             </>
           ) : ( // Deposit or Withdraw
             <>
@@ -335,51 +396,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               </div>
               <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
               
-              {/* Note and Screenshot Section */}
-              <div className="flex gap-2">
-                 <div className="flex-grow">
-                    <TextAreaField
-                        label="Note (Optional)"
-                        placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
-                        value={note}
-                        onChange={e => setNote(e.target.value)}
-                        rows={2}
-                    />
-                 </div>
-                 <div className="flex flex-col justify-end pb-1">
-                    <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                    />
-                    <div className="relative">
-                        {screenshot ? (
-                            <div className="relative group">
-                                <img src={screenshot} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-300 dark:border-slate-600" />
-                                <button 
-                                    type="button" 
-                                    onClick={clearScreenshot}
-                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600"
-                                >
-                                    <CloseIcon className="w-3 h-3 text-white" />
-                                </button>
-                            </div>
-                        ) : (
-                             <button 
-                                type="button"
-                                onClick={() => fileInputRef.current?.click()}
-                                className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                                title="Upload Screenshot"
-                            >
-                                <CameraIcon className="w-6 h-6 mb-1" />
-                                <span className="text-[10px]">Photo</span>
-                            </button>
-                        )}
-                    </div>
-                 </div>
-              </div>
+              {renderNoteAndScreenshot()}
             </>
           )}
 
