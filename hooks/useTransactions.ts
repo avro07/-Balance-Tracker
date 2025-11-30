@@ -1,56 +1,34 @@
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Transaction, TransactionType, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { BANK_ACCOUNTS, PAYMENT_METHODS, API_BASE_URL } from '../constants';
+import { BANK_ACCOUNTS, PAYMENT_METHODS } from '../constants';
 
 export const useTransactions = () => {
   const { isAdmin } = useAuth();
+  
+  // Initialize state directly from Local Storage
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    // Initialize from local storage immediately for speed/offline support
     try {
       const localData = window.localStorage.getItem('transactions');
       return localData ? JSON.parse(localData) : [];
     } catch (e) {
+      console.error("Failed to load transactions from local storage", e);
       return [];
     }
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Sync with Local Storage helper
+  // Helper to save to Local Storage
   const saveToLocalStorage = (data: Transaction[]) => {
-    window.localStorage.setItem('transactions', JSON.stringify(data));
+    try {
+      window.localStorage.setItem('transactions', JSON.stringify(data));
+    } catch (e) {
+      console.error("Failed to save to local storage", e);
+      alert("Storage limit reached! Please export and clear old data.");
+    }
   };
 
-  // Fetch transactions from Server
-  const fetchTransactions = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      // Attempt to fetch from server
-      const response = await fetch(API_BASE_URL);
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (Array.isArray(data)) {
-          setTransactions(data);
-          saveToLocalStorage(data); // Update local backup
-          setError(null);
-        }
-      }
-    } catch (err) {
-      // Server unreachable, silently using local data
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Initial Load
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
-
-  const addTransaction = useCallback(async (transactionData: Omit<Transaction, 'id'>) => {
+  const addTransaction = useCallback((transactionData: Omit<Transaction, 'id'>) => {
     if (!isAdmin) return;
     
     const newTransaction = {
@@ -58,71 +36,32 @@ export const useTransactions = () => {
       id: crypto.randomUUID(),
     };
 
-    // Optimistic Update: Update UI & Local Storage immediately
     setTransactions(prev => {
         const updated = [newTransaction, ...prev];
         saveToLocalStorage(updated);
         return updated;
     });
-
-    try {
-      const response = await fetch(API_BASE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newTransaction),
-      });
-
-      if (!response.ok) throw new Error('Server error');
-    } catch (err) {
-      // Failed to save to server, saved locally only (silent)
-    }
   }, [isAdmin]);
   
-  const updateTransaction = useCallback(async (updatedTransaction: Transaction) => {
+  const updateTransaction = useCallback((updatedTransaction: Transaction) => {
     if (!isAdmin) return;
 
-    // Optimistic Update
     setTransactions(prev => {
         const updated = prev.map(tx => tx.id === updatedTransaction.id ? updatedTransaction : tx);
         saveToLocalStorage(updated);
         return updated;
     });
-
-    try {
-        const response = await fetch(API_BASE_URL, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedTransaction),
-        });
-
-        if (!response.ok) throw new Error('Server error');
-    } catch (err) {
-        // Failed to update on server, updated locally only (silent)
-    }
   }, [isAdmin]);
 
-  const deleteTransaction = useCallback(async (id: string) => {
+  const deleteTransaction = useCallback((id: string) => {
     if (!isAdmin) return;
     if (!window.confirm('Are you sure you want to delete this transaction?')) return;
 
-    // Optimistic Update
     setTransactions(prev => {
         const updated = prev.filter(tx => tx.id !== id);
         saveToLocalStorage(updated);
         return updated;
     });
-
-    try {
-        const response = await fetch(API_BASE_URL, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-        });
-
-        if (!response.ok) throw new Error('Server error');
-    } catch (err) {
-        // Failed to delete from server, deleted locally only (silent)
-    }
   }, [isAdmin]);
 
   // Calculate Running Balances
@@ -255,7 +194,7 @@ export const useTransactions = () => {
     updateTransaction, 
     deleteTransaction, 
     summaries,
-    isLoading,
-    error
+    isLoading: false, // Always false in local mode
+    error: null
   };
 };
