@@ -79,7 +79,6 @@ export const useTransactions = () => {
     } catch (err) {
       console.warn("Failed to save to server, saved locally only.");
       // We do NOT revert state here, keeping the local data intact
-      alert("Note: Server unreachable. Transaction saved locally on this device.");
     }
   }, [isAdmin]);
   
@@ -103,7 +102,6 @@ export const useTransactions = () => {
         if (!response.ok) throw new Error('Server error');
     } catch (err) {
         console.warn("Failed to update on server, updated locally only.");
-        alert("Note: Server unreachable. Update saved locally on this device.");
     }
   }, [isAdmin]);
 
@@ -128,7 +126,6 @@ export const useTransactions = () => {
         if (!response.ok) throw new Error('Server error');
     } catch (err) {
         console.warn("Failed to delete from server, deleted locally only.");
-        alert("Note: Server unreachable. Deleted locally on this device.");
     }
   }, [isAdmin]);
 
