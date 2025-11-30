@@ -45,6 +45,37 @@ type TransactionTupleV4 = [
 ];
 
 /**
+ * Helper to encode string to Base64 with Unicode support
+ */
+export const encodeData = (str: string): string => {
+    const encoder = new TextEncoder();
+    const uint8array = encoder.encode(str);
+    let binStr = '';
+    uint8array.forEach((byte) => {
+        binStr += String.fromCharCode(byte);
+    });
+    return btoa(binStr);
+};
+
+/**
+ * Helper to decode Base64 string to Unicode string
+ */
+export const decodeData = (base64: string): string => {
+    try {
+        const binStr = atob(base64);
+        const uint8array = new Uint8Array(binStr.length);
+        for (let i = 0; i < binStr.length; i++) {
+            uint8array[i] = binStr.charCodeAt(i);
+        }
+        const decoder = new TextDecoder();
+        return decoder.decode(uint8array);
+    } catch (e) {
+        console.error("Failed to decode base64", e);
+        return "";
+    }
+};
+
+/**
  * Serializes an array of transaction objects into a highly compact JSON string of tuples.
  * This significantly reduces the length of the string for sharing in a URL.
  * @param transactions The array of Transaction objects.

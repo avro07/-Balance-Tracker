@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -10,7 +9,7 @@ import ShareModal from './components/ShareModal';
 import ShareOptionsMenu from './components/ShareOptionsMenu';
 import { AddIcon, ExportIcon, ShareIcon } from './components/Icons';
 import { useAuth } from './contexts/AuthContext';
-import { serializeTransactionsForSharing } from './utils/sharing';
+import { serializeTransactionsForSharing, encodeData } from './utils/sharing';
 import ThemeToggle from './components/ThemeToggle';
 
 const App: React.FC = () => {
@@ -104,19 +103,8 @@ const App: React.FC = () => {
       }
 
       const compactData = serializeTransactionsForSharing(transactionsToShare);
-      
-      const unicodeBtoa = (str: string) => {
-        const encoder = new TextEncoder();
-        const uint8array = encoder.encode(str);
-        let binStr = '';
-        uint8array.forEach((byte) => {
-            binStr += String.fromCharCode(byte);
-        });
-        return btoa(binStr);
-      };
-
-      const encodedData = encodeURIComponent(unicodeBtoa(compactData));
-      const link = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+      const encodedDataStr = encodeURIComponent(encodeData(compactData));
+      const link = `${window.location.origin}${window.location.pathname}?data=${encodedDataStr}`;
       
       setShareableLink(link);
       setIsShareOptionsOpen(false);
@@ -142,19 +130,8 @@ const App: React.FC = () => {
       }
 
       const compactData = serializeTransactionsForSharing(transactionsToShare);
-      
-      const unicodeBtoa = (str: string) => {
-        const encoder = new TextEncoder();
-        const uint8array = encoder.encode(str);
-        let binStr = '';
-        uint8array.forEach((byte) => {
-            binStr += String.fromCharCode(byte);
-        });
-        return btoa(binStr);
-      };
-
-      const encodedData = encodeURIComponent(unicodeBtoa(compactData));
-      const link = `${window.location.origin}${window.location.pathname}?mode=admin&data=${encodedData}`;
+      const encodedDataStr = encodeURIComponent(encodeData(compactData));
+      const link = `${window.location.origin}${window.location.pathname}?mode=admin&data=${encodedDataStr}`;
       
       setShareableLink(link);
       setIsShareOptionsOpen(false);

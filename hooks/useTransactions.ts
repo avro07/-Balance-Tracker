@@ -1,14 +1,33 @@
-
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Transaction, TransactionType, GlobalSummaries } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { BANK_ACCOUNTS, PAYMENT_METHODS } from '../constants';
+import { deserializeTransactionsForSharing, decodeData } from '../utils/sharing';
 
 export const useTransactions = () => {
   const { isAdmin } = useAuth();
   
-  // Initialize state directly from Local Storage
+  // Initialize state directly from Local Storage or URL parameters
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    // 1. Check URL for shared data
+    const params = new URLSearchParams(window.location.search);
+    const sharedData = params.get('data');
+
+    if (sharedData) {
+      try {
+        const decodedJson = decodeData(decodeURIComponent(sharedData));
+        if (decodedJson) {
+            const parsedTransactions = deserializeTransactionsForSharing(decodedJson);
+            // Save to local storage immediately so it persists
+            window.localStorage.setItem('transactions', JSON.stringify(parsedTransactions));
+            return parsedTransactions;
+        }
+      } catch (e) {
+        console.error("Failed to parse shared data", e);
+      }
+    }
+
+    // 2. Fallback to Local Storage
     try {
       const localData = window.localStorage.getItem('transactions');
       return localData ? JSON.parse(localData) : [];
@@ -17,6 +36,15 @@ export const useTransactions = () => {
       return [];
     }
   });
+
+  // Effect to clean URL if data param was present
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('data')) {
+      const newUrl = window.location.pathname + (params.get('mode') ? `?mode=${params.get('mode')}` : '');
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
 
   // Helper to save to Local Storage
   const saveToLocalStorage = (data: Transaction[]) => {
