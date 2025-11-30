@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Transaction, TransactionType } from '../types';
 import { PAYMENT_METHODS, BANK_ACCOUNTS } from '../constants';
 import { getTodayDateString } from '../utils/formatting';
-import { CloseIcon, CameraIcon, DeleteIcon } from './Icons';
+import { CloseIcon, CameraIcon } from './Icons';
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -296,7 +296,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                     title="Upload Screenshot"
                 >
                     <CameraIcon className="w-6 h-6 mb-1" />
-                    <span className="text-[10px]">Photo</span>
+                    <span className="text-[10px]">Proof</span>
                 </button>
             )}
         </div>
