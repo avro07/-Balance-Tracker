@@ -191,7 +191,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             toBankAccount: toPaymentMethod === 'Bank' ? toBankAccount : undefined,
             bdtAmount: parseFloat(bdtAmount),
             note: note.trim() ? note.trim() : undefined,
-            screenshot: undefined, // Transfer doesn't support screenshot per requirement
+            screenshot: undefined, // Transfer doesn't support screenshot
         };
     } else if (isUsdTransaction) {
         payload = {
@@ -202,7 +202,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             bdtAmount: calculatedBdtAmount,
             note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
-            screenshot: undefined, // Buy/Sell doesn't support screenshot per requirement
+            screenshot: undefined, // Buy/Sell doesn't support screenshot
         };
     } else { // Deposit or Withdraw
         payload = {
@@ -250,16 +250,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     switch(type) {
         case TransactionType.DEPOSIT: return "e.g., Initial capital";
         case TransactionType.WITHDRAW: return "e.g., Office expenses";
-        case TransactionType.TRANSFER: return "e.g., Monthly transfer";
-        case TransactionType.BUY: return "e.g., Payment for USD";
-        case TransactionType.SELL: return "e.g., Sold USD to Client";
         default: return "e.g., Description";
     }
   };
 
   const renderNoteAndScreenshot = () => {
-    // Only allow screenshot for Deposit and Withdraw
-    const supportsScreenshot = type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW;
+    // Only render Note and Screenshot fields for Deposit and Withdraw
+    const isDepositOrWithdraw = type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW;
+
+    if (!isDepositOrWithdraw) return null;
 
     return (
       <div className="flex gap-2">
@@ -272,8 +271,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
               rows={2}
           />
           </div>
-          {supportsScreenshot && (
-            <div className="flex flex-col justify-end pb-1">
+          <div className="flex flex-col justify-end pb-1">
             <input 
                 type="file" 
                 accept="image/*" 
@@ -305,8 +303,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                     </button>
                 )}
             </div>
-            </div>
-          )}
+          </div>
       </div>
     );
   };
