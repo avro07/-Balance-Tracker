@@ -191,7 +191,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             toBankAccount: toPaymentMethod === 'Bank' ? toBankAccount : undefined,
             bdtAmount: parseFloat(bdtAmount),
             note: note.trim() ? note.trim() : undefined,
-            screenshot,
+            screenshot: undefined, // Transfer doesn't support screenshot per requirement
         };
     } else if (isUsdTransaction) {
         payload = {
@@ -202,7 +202,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             bdtAmount: calculatedBdtAmount,
             note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
-            screenshot,
+            screenshot: undefined, // Buy/Sell doesn't support screenshot per requirement
         };
     } else { // Deposit or Withdraw
         payload = {
@@ -257,52 +257,59 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     }
   };
 
-  const renderNoteAndScreenshot = () => (
-    <div className="flex gap-2">
-        <div className="flex-grow">
-        <TextAreaField
-            label="Note (Optional)"
-            placeholder={getNotePlaceholder()}
-            value={note}
-            onChange={e => setNote(e.target.value)}
-            rows={2}
-        />
-        </div>
-        <div className="flex flex-col justify-end pb-1">
-        <input 
-            type="file" 
-            accept="image/*" 
-            className="hidden" 
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-        />
-        <div className="relative">
-            {screenshot ? (
-                <div className="relative group">
-                    <img src={screenshot} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-300 dark:border-slate-600" />
-                    <button 
-                        type="button" 
-                        onClick={clearScreenshot}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600"
+  const renderNoteAndScreenshot = () => {
+    // Only allow screenshot for Deposit and Withdraw
+    const supportsScreenshot = type === TransactionType.DEPOSIT || type === TransactionType.WITHDRAW;
+
+    return (
+      <div className="flex gap-2">
+          <div className="flex-grow">
+          <TextAreaField
+              label="Note (Optional)"
+              placeholder={getNotePlaceholder()}
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              rows={2}
+          />
+          </div>
+          {supportsScreenshot && (
+            <div className="flex flex-col justify-end pb-1">
+            <input 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+            />
+            <div className="relative">
+                {screenshot ? (
+                    <div className="relative group">
+                        <img src={screenshot} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-300 dark:border-slate-600" />
+                        <button 
+                            type="button" 
+                            onClick={clearScreenshot}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600"
+                        >
+                            <CloseIcon className="w-3 h-3 text-white" />
+                        </button>
+                    </div>
+                ) : (
+                        <button 
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        title="Upload Screenshot"
                     >
-                        <CloseIcon className="w-3 h-3 text-white" />
+                        <CameraIcon className="w-6 h-6 mb-1" />
+                        <span className="text-[10px]">Proof</span>
                     </button>
-                </div>
-            ) : (
-                    <button 
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                    title="Upload Screenshot"
-                >
-                    <CameraIcon className="w-6 h-6 mb-1" />
-                    <span className="text-[10px]">Proof</span>
-                </button>
-            )}
-        </div>
-        </div>
-    </div>
-  );
+                )}
+            </div>
+            </div>
+          )}
+      </div>
+    );
+  };
 
 
   return (
