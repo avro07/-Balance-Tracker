@@ -2,7 +2,6 @@ const CACHE_NAME = 'bdt-usd-tracker-cache-v6';
 const APP_SHELL_URLS = [
   '/',
   '/index.html',
-  '/index.tsx',
   '/manifest.webmanifest',
 ];
 
