@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Transaction, TransactionType } from '../types';
 import { PAYMENT_METHODS, BANK_ACCOUNTS } from '../constants';
 import { getTodayDateString } from '../utils/formatting';
-import { CloseIcon } from './Icons';
+import { CloseIcon, CameraIcon, DeleteIcon } from './Icons';
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -21,7 +22,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
   const [bdtCharge, setBdtCharge] = useState('0');
   const [bdtAmount, setBdtAmount] = useState('');
   const [note, setNote] = useState('');
+  const [screenshot, setScreenshot] = useState<string | undefined>(undefined);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State for Transfer type
   const [toPaymentMethod, setToPaymentMethod] = useState('Bank');
@@ -41,6 +44,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
       setBankAccount(transactionToEdit.bankAccount ?? '');
       setBdtAmount(transactionToEdit.bdtAmount.toString());
       setNote(transactionToEdit.note ?? '');
+      setScreenshot(transactionToEdit.screenshot);
       
       if (txType === TransactionType.BUY || txType === TransactionType.SELL) {
           setUsdAmount(transactionToEdit.usdAmount?.toString() ?? '');
@@ -69,12 +73,60 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
     setType(newType);
     setErrors({}); // Clear errors on type change
     setNote(''); // Clear note on type change
+    setScreenshot(undefined); // Clear screenshot on type change
     setBdtAmount('');
     const isNewTypeUsd = newType === TransactionType.BUY || newType === TransactionType.SELL;
     if (!isNewTypeUsd) {
       setUsdAmount('');
       setUsdRate('');
       setBdtCharge('0');
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compress image to JPEG with 0.6 quality
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          setScreenshot(dataUrl);
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearScreenshot = () => {
+    setScreenshot(undefined);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';
     }
   };
 
@@ -139,6 +191,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             toBankAccount: toPaymentMethod === 'Bank' ? toBankAccount : undefined,
             bdtAmount: parseFloat(bdtAmount),
             note: note.trim() ? note.trim() : undefined,
+            screenshot,
         };
     } else if (isUsdTransaction) {
         payload = {
@@ -149,6 +202,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             bdtAmount: calculatedBdtAmount,
             note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
+            screenshot,
         };
     } else { // Deposit or Withdraw
         payload = {
@@ -156,6 +210,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
             bdtAmount: parseFloat(bdtAmount),
             note: note.trim() ? note.trim() : undefined,
             ...(paymentMethod === 'Bank' && { bankAccount }),
+            screenshot,
         };
     }
     
@@ -194,8 +249,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-rose-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-xl w-full max-w-md border border-slate-200/60 dark:border-slate-700">
-        <div className="p-5 border-b border-rose-200/60 dark:border-rose-500/20 flex justify-between items-center">
+      <div className="bg-gradient-to-br from-rose-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-xl w-full max-w-md border border-slate-200/60 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+        <div className="p-5 border-b border-rose-200/60 dark:border-rose-500/20 flex justify-between items-center sticky top-0 bg-inherit z-10 rounded-t-lg">
           <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{isEditing ? 'Edit' : 'New'} {isTransfer ? 'Transfer' : 'Transaction'}</h2>
           <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"><CloseIcon /></button>
         </div>
@@ -279,13 +334,52 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onAddTransac
                 )}
               </div>
               <InputField label="BDT Amount" type="number" placeholder="e.g., 50000" value={bdtAmount} onChange={handleInputChange(setBdtAmount, 'bdtAmount')} required error={errors.bdtAmount} />
-              <TextAreaField
-                label="Note (Optional)"
-                placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
-                value={note}
-                onChange={e => setNote(e.target.value)}
-                rows={2}
-              />
+              
+              {/* Note and Screenshot Section */}
+              <div className="flex gap-2">
+                 <div className="flex-grow">
+                    <TextAreaField
+                        label="Note (Optional)"
+                        placeholder={type === TransactionType.DEPOSIT ? "e.g., Initial capital" : "e.g., Office expenses"}
+                        value={note}
+                        onChange={e => setNote(e.target.value)}
+                        rows={2}
+                    />
+                 </div>
+                 <div className="flex flex-col justify-end pb-1">
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                    />
+                    <div className="relative">
+                        {screenshot ? (
+                            <div className="relative group">
+                                <img src={screenshot} alt="Preview" className="w-16 h-16 object-cover rounded-md border border-slate-300 dark:border-slate-600" />
+                                <button 
+                                    type="button" 
+                                    onClick={clearScreenshot}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600"
+                                >
+                                    <CloseIcon className="w-3 h-3 text-white" />
+                                </button>
+                            </div>
+                        ) : (
+                             <button 
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-16 h-16 flex flex-col items-center justify-center border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                title="Upload Screenshot"
+                            >
+                                <CameraIcon className="w-6 h-6 mb-1" />
+                                <span className="text-[10px]">Photo</span>
+                            </button>
+                        )}
+                    </div>
+                 </div>
+              </div>
             </>
           )}
 

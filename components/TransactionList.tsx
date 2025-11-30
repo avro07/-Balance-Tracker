@@ -1,7 +1,8 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Transaction, TransactionType } from '../types';
 import { formatCurrency } from '../utils/formatting';
-import { BuyIcon, SellIcon, DepositIcon, WithdrawIcon, EditIcon, DeleteIcon, TransferIcon } from './Icons';
+import { BuyIcon, SellIcon, DepositIcon, WithdrawIcon, EditIcon, DeleteIcon, TransferIcon, EyeIcon, CloseIcon } from './Icons';
 import PaymentMethodIcon from './PaymentMethodIcon';
 
 interface TransactionListProps {
@@ -25,11 +26,12 @@ interface TransactionItemProps {
   transaction: Transaction;
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => void;
+  onViewScreenshot: (src: string) => void;
   isAdmin: boolean;
 }
 
 
-const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete, isAdmin }) => {
+const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEdit, onDelete, onViewScreenshot, isAdmin }) => {
   const details = typeDetails[tx.type];
   const isUsdTransaction = tx.type === TransactionType.BUY || tx.type === TransactionType.SELL;
   const isTransfer = tx.type === TransactionType.TRANSFER;
@@ -90,16 +92,23 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction: tx, onEd
             </div>
         )}
       </div>
-      {isAdmin && (
-        <div className="flex flex-col space-y-2 -mr-2">
-          <button onClick={() => onEdit(tx)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-500 dark:hover:text-indigo-400 dark:hover:bg-slate-800 rounded-md transition-colors">
-            <EditIcon />
-          </button>
-          <button onClick={() => onDelete(tx.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:text-slate-500 dark:hover:text-red-400 dark:hover:bg-slate-800 rounded-md transition-colors">
-            <DeleteIcon />
-          </button>
-        </div>
-      )}
+      <div className="flex flex-col space-y-2 -mr-2">
+         {tx.screenshot && (
+             <button onClick={() => onViewScreenshot(tx.screenshot!)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-500 dark:hover:text-indigo-400 dark:hover:bg-slate-800 rounded-md transition-colors" title="View Screenshot">
+                <EyeIcon />
+             </button>
+         )}
+         {isAdmin && (
+            <>
+              <button onClick={() => onEdit(tx)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-500 dark:hover:text-indigo-400 dark:hover:bg-slate-800 rounded-md transition-colors">
+                <EditIcon />
+              </button>
+              <button onClick={() => onDelete(tx.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:text-slate-500 dark:hover:text-red-400 dark:hover:bg-slate-800 rounded-md transition-colors">
+                <DeleteIcon />
+              </button>
+            </>
+         )}
+      </div>
     </li>
   );
 };
@@ -119,6 +128,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
   onDeleteTransaction,
   isAdmin
 }) => {
+  const [screenshotToView, setScreenshotToView] = useState<string | null>(null);
+
   return (
     <div>
       <div className="mb-4 p-4 bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
@@ -133,13 +144,37 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
       {transactions.length > 0 ? (
         <ul className="space-y-3">
-          {transactions.map(tx => <TransactionItem key={tx.id} transaction={tx} onEdit={onEditTransaction} onDelete={onDeleteTransaction} isAdmin={isAdmin} />)}
+          {transactions.map(tx => (
+            <TransactionItem 
+                key={tx.id} 
+                transaction={tx} 
+                onEdit={onEditTransaction} 
+                onDelete={onDeleteTransaction}
+                onViewScreenshot={setScreenshotToView}
+                isAdmin={isAdmin} 
+            />
+          ))}
         </ul>
       ) : (
         <div className="text-center py-10 px-4 bg-white dark:bg-[#1e293b] rounded-lg shadow-sm border border-slate-200/80 dark:border-slate-800">
             <p className="text-slate-500 dark:text-slate-400">No transactions found.</p>
             <p className="text-sm text-slate-400 dark:text-slate-500">Try adjusting your filters or add a new transaction.</p>
         </div>
+      )}
+
+      {/* Screenshot Modal */}
+      {screenshotToView && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4" onClick={() => setScreenshotToView(null)}>
+              <div className="relative max-w-full max-h-full">
+                  <button 
+                    onClick={() => setScreenshotToView(null)}
+                    className="absolute -top-10 right-0 p-2 text-white hover:text-gray-300"
+                  >
+                      <CloseIcon className="w-8 h-8 text-white" />
+                  </button>
+                  <img src={screenshotToView} alt="Screenshot" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
+              </div>
+          </div>
       )}
     </div>
   );

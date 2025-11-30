@@ -1,3 +1,4 @@
+
 export enum TransactionType {
   BUY = 'Buy',
   SELL = 'Sell',
@@ -19,6 +20,7 @@ export interface Transaction {
   bdtCharge?: number;
   bdtAmount: number;
   note?: string;
+  screenshot?: string; // Base64 encoded string
   runningBdtBalance?: number;
   runningUsdBalance?: number;
 }
