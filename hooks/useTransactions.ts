@@ -37,12 +37,9 @@ export const useTransactions = () => {
           saveToLocalStorage(data); // Update local backup
           setError(null);
         }
-      } else {
-        console.warn('Server responded with error, using local data:', response.statusText);
       }
     } catch (err) {
-      console.warn("Server unreachable, using local data.");
-      // No need to do anything else, we already initialized from local storage
+      // Server unreachable, silently using local data
     } finally {
       setIsLoading(false);
     }
@@ -77,8 +74,7 @@ export const useTransactions = () => {
 
       if (!response.ok) throw new Error('Server error');
     } catch (err) {
-      console.warn("Failed to save to server, saved locally only.");
-      // We do NOT revert state here, keeping the local data intact
+      // Failed to save to server, saved locally only (silent)
     }
   }, [isAdmin]);
   
@@ -101,7 +97,7 @@ export const useTransactions = () => {
 
         if (!response.ok) throw new Error('Server error');
     } catch (err) {
-        console.warn("Failed to update on server, updated locally only.");
+        // Failed to update on server, updated locally only (silent)
     }
   }, [isAdmin]);
 
@@ -125,7 +121,7 @@ export const useTransactions = () => {
 
         if (!response.ok) throw new Error('Server error');
     } catch (err) {
-        console.warn("Failed to delete from server, deleted locally only.");
+        // Failed to delete from server, deleted locally only (silent)
     }
   }, [isAdmin]);
 
