@@ -143,18 +143,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-white dark:from-[#020617] dark:to-[#0f172a] min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300">
-      <div className="px-3 sm:px-6 pb-2 sm:pb-4 header-container-safe-area">
-        <header className="relative bg-transparent shadow-md shadow-blue-500/10 dark:shadow-blue-900/20 rounded-lg py-2 sm:py-3 border border-slate-200/60 dark:border-slate-800">
-            <h1 className="text-center font-hind-siliguri text-2xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text">আর.এস নেক্সাস লিমিটেড</h1>
+    <div className="bg-gradient-to-br from-blue-50 to-white dark:from-[#020617] dark:to-[#0f172a] min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col">
+      <div className="px-3 sm:px-6 pt-2 pb-4 header-container-safe-area flex-shrink-0">
+        <header className="relative bg-transparent shadow-md shadow-blue-500/10 dark:shadow-blue-900/20 rounded-lg py-3 border border-slate-200/60 dark:border-slate-800">
+            <h1 className="text-center font-hind-siliguri text-xl sm:text-3xl font-semibold text-shadow-custom animate-gradient-text px-10">আর.এস নেক্সাস লিমিটেড</h1>
             <div className="absolute top-1/2 right-3 sm:right-4 -translate-y-1/2">
               <ThemeToggle />
             </div>
         </header>
       </div>
       
-      <div className="bg-slate-50 dark:bg-[#020617]">
-        <main className="px-3 pt-3 sm:px-4 sm:pt-6 pb-24">
+      <div className="bg-slate-50 dark:bg-[#020617] flex-grow rounded-t-[2rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border-t border-white/50 dark:border-slate-800/50 relative overflow-hidden">
+        <main className="px-3 pt-6 sm:px-4 sm:pt-8 pb-32">
           <Dashboard summaries={summaries} transactions={transactions} isAdmin={isAdmin} />
           <div className="mt-6 sm:mt-8">
             <TransactionList
@@ -201,32 +201,32 @@ const App: React.FC = () => {
 
         {/* Bottom Action Bar - Only for Admins */}
         {isAdmin && (
-          <div className="fixed bottom-4 left-4 right-4 z-10">
-            <div className="max-w-md mx-auto flex justify-center items-center gap-3">
+          <div className="fixed bottom-6 left-4 right-4 z-20">
+            <div className="max-w-md mx-auto flex justify-center items-center gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-2 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50">
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="w-32 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-sky-500 to-blue-500 dark:from-cyan-700 dark:to-blue-800 text-white font-medium rounded-lg shadow-md shadow-sky-500/20 dark:shadow-cyan-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-cyan-500/30"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
-                <ExportIcon />
-                <span>Export</span>
+                <ExportIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Export</span>
               </button>
               
               <button
                 onClick={handleOpenAddForm}
                 aria-label="New Transaction"
-                className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 dark:from-orange-600 dark:to-red-700 text-white rounded-full hover:-translate-y-1 transform transition-all duration-200 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 dark:shadow-orange-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-orange-500/30"
+                className="flex-shrink-0 -mt-8 w-16 h-16 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-2xl shadow-xl shadow-indigo-500/40 hover:-translate-y-1 transition-transform"
               >
-                <AddIcon className="w-7 h-7 animate-plus-icon" />
+                <AddIcon className="w-8 h-8" />
               </button>
 
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="w-32 flex items-center justify-center gap-2 py-2 px-3 text-sm bg-gradient-to-br from-indigo-500 to-purple-500 dark:from-violet-700 dark:to-fuchsia-800 text-white font-medium rounded-lg shadow-md shadow-indigo-500/20 dark:shadow-purple-900/30 hover:-translate-y-0.5 transform transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-slate-900 border border-transparent dark:border-purple-500/30"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
-                <ShareIcon />
-                <span>Share</span>
+                <ShareIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Share</span>
               </button>
             </div>
           </div>
