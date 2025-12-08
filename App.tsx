@@ -154,7 +154,7 @@ const App: React.FC = () => {
       </div>
       
       <div className="bg-slate-50 dark:bg-[#020617] flex-grow rounded-t-[2rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border-t border-white/50 dark:border-slate-800/50 relative overflow-hidden">
-        <main className="px-3 pt-6 sm:px-4 sm:pt-8 pb-32">
+        <main className={`px-3 pt-6 sm:px-4 sm:pt-8 ${isAdmin ? 'pb-28' : 'pb-10'}`}>
           <Dashboard summaries={summaries} transactions={transactions} isAdmin={isAdmin} />
           <div className="mt-6 sm:mt-8">
             <TransactionList
@@ -201,32 +201,34 @@ const App: React.FC = () => {
 
         {/* Bottom Action Bar - Only for Admins */}
         {isAdmin && (
-          <div className="fixed bottom-6 left-4 right-4 z-20">
-            <div className="max-w-md mx-auto flex justify-center items-center gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-2 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50">
+          <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/90 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)]">
+            <div className="max-w-xl mx-auto px-6 h-16 flex justify-between items-center relative">
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                className="flex flex-col items-center justify-center gap-1 w-16 h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
               >
-                <ExportIcon className="w-5 h-5" />
-                <span className="hidden sm:inline">Export</span>
+                <ExportIcon className="w-6 h-6" />
+                <span className="text-[10px] font-medium">Export</span>
               </button>
               
-              <button
-                onClick={handleOpenAddForm}
-                aria-label="New Transaction"
-                className="flex-shrink-0 -mt-8 w-16 h-16 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-2xl shadow-xl shadow-indigo-500/40 hover:-translate-y-1 transition-transform"
-              >
-                <AddIcon className="w-8 h-8" />
-              </button>
+              <div className="relative -top-6">
+                <button
+                  onClick={handleOpenAddForm}
+                  aria-label="New Transaction"
+                  className="w-14 h-14 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-full shadow-lg shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all border-4 border-slate-50 dark:border-slate-900"
+                >
+                  <AddIcon className="w-7 h-7" />
+                </button>
+              </div>
 
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                className="flex flex-col items-center justify-center gap-1 w-16 h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
               >
-                <ShareIcon className="w-5 h-5" />
-                <span className="hidden sm:inline">Share</span>
+                <ShareIcon className="w-6 h-6" />
+                <span className="text-[10px] font-medium">Share</span>
               </button>
             </div>
           </div>

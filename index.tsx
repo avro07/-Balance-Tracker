@@ -7,7 +7,8 @@ import { ThemeProvider } from './contexts/ThemeContext';
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    // FIX: Use relative path './' instead of absolute '/' to support cPanel subdirectories
+    navigator.serviceWorker.register('./service-worker.js')
       .then(registration => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
       })

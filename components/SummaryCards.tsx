@@ -25,11 +25,11 @@ const SummaryCard: React.FC<{
   return (
   <div
     onClick={onClick}
-    className={`relative p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-white/50 dark:border-white/10 transition-all duration-300 ${gradientClass} ${onClick ? 'cursor-pointer active:scale-95' : ''} overflow-hidden min-h-[90px] sm:min-h-[110px] flex flex-col justify-center`}
+    className={`relative p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-white/50 dark:border-white/10 transition-all duration-300 ${gradientClass} ${onClick ? 'cursor-pointer active:scale-95' : ''} overflow-hidden min-h-[100px] sm:min-h-[120px] flex flex-col justify-center`}
   >
     <div className="relative z-10">
       <p className="text-[0.7rem] sm:text-xs font-bold text-slate-600/90 dark:text-slate-400 mb-1 uppercase tracking-wide">{title}</p>
-      <p className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 font-hind-siliguri leading-normal tracking-tight truncate pb-1" title={value}>
+      <p className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 font-hind-siliguri leading-relaxed tracking-tight truncate pb-1" title={value}>
         {value}
       </p>
     </div>
