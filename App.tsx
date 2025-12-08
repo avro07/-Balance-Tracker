@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useTransactions } from './hooks/useTransactions';
 import { Transaction, TransactionType } from './types';
@@ -154,7 +155,7 @@ const App: React.FC = () => {
       </div>
       
       <div className="bg-slate-50 dark:bg-[#020617] flex-grow rounded-t-[2rem] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border-t border-white/50 dark:border-slate-800/50 relative overflow-hidden">
-        <main className={`px-3 pt-6 sm:px-4 sm:pt-8 ${isAdmin ? 'pb-28' : 'pb-10'}`}>
+        <main className={`px-3 pt-6 sm:px-4 sm:pt-8 ${isAdmin ? 'pb-32' : 'pb-10'}`}>
           <Dashboard summaries={summaries} transactions={transactions} isAdmin={isAdmin} />
           <div className="mt-6 sm:mt-8">
             <TransactionList
@@ -201,34 +202,45 @@ const App: React.FC = () => {
 
         {/* Bottom Action Bar - Only for Admins */}
         {isAdmin && (
-          <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/90 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)]">
-            <div className="max-w-xl mx-auto px-6 h-16 flex justify-between items-center relative">
+          <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/90 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] transition-all duration-300">
+            <div className="max-w-xl mx-auto px-8 h-20 flex justify-between items-center relative">
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="flex flex-col items-center justify-center gap-1 w-16 h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
+                className="group flex flex-col items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
               >
-                <ExportIcon className="w-6 h-6" />
-                <span className="text-[10px] font-medium">Export</span>
+                <div className="p-2 rounded-xl group-hover:bg-indigo-50 dark:group-hover:bg-slate-800 transition-colors">
+                  <ExportIcon className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-semibold tracking-wide">Export</span>
               </button>
               
-              <div className="relative -top-6">
+              <div className="relative -top-10 group cursor-pointer" onClick={handleOpenAddForm}>
+                {/* Pulsing Glow Background */}
+                <div className="absolute inset-3 bg-indigo-500 rounded-full blur-xl opacity-40 group-hover:opacity-60 animate-pulse transition-opacity duration-500"></div>
+                
+                {/* Main Button */}
                 <button
-                  onClick={handleOpenAddForm}
                   aria-label="New Transaction"
-                  className="w-14 h-14 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-full shadow-lg shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all border-4 border-slate-50 dark:border-slate-900"
+                  className="relative w-20 h-20 flex items-center justify-center bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/40 hover:shadow-indigo-500/60 hover:scale-105 active:scale-95 transition-all duration-300 border-[6px] border-slate-50 dark:border-slate-900 z-10 overflow-hidden"
                 >
-                  <AddIcon className="w-7 h-7" />
+                  {/* Inner sheen effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent opacity-50"></div>
+                  
+                  {/* Icon with Animation */}
+                  <AddIcon className="w-9 h-9 animate-plus-icon drop-shadow-md relative z-20" />
                 </button>
               </div>
 
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="flex flex-col items-center justify-center gap-1 w-16 h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
+                className="group flex flex-col items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
               >
-                <ShareIcon className="w-6 h-6" />
-                <span className="text-[10px] font-medium">Share</span>
+                <div className="p-2 rounded-xl group-hover:bg-indigo-50 dark:group-hover:bg-slate-800 transition-colors">
+                   <ShareIcon className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-semibold tracking-wide">Share</span>
               </button>
             </div>
           </div>
