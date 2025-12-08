@@ -202,46 +202,46 @@ const App: React.FC = () => {
 
         {/* Bottom Action Bar - Only for Admins */}
         {isAdmin && (
-          <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/90 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] transition-all duration-300">
-            <div className="max-w-xl mx-auto px-8 h-20 flex justify-between items-center relative">
+          <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/80 dark:bg-slate-900/85 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] transition-all duration-300">
+            <div className="max-w-xl mx-auto px-6 h-20 flex justify-between items-end pb-3 relative">
+              
+              {/* Export Button */}
               <button
                 onClick={() => setIsExportModalOpen(true)}
                 aria-label="Export Transactions"
-                className="group flex flex-col items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
+                className="group relative flex flex-col items-center justify-center gap-1 active:scale-95 transition-all duration-200"
               >
-                <div className="p-2 rounded-xl group-hover:bg-indigo-50 dark:group-hover:bg-slate-800 transition-colors">
-                  <ExportIcon className="w-6 h-6" />
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 shadow-sm group-hover:shadow-indigo-100 dark:group-hover:shadow-none border border-slate-200 dark:border-slate-700 transition-all duration-300">
+                   <ExportIcon className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-semibold tracking-wide">Export</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 tracking-wide uppercase">Export</span>
               </button>
               
-              <div className="relative -top-10 group cursor-pointer" onClick={handleOpenAddForm}>
-                {/* Pulsing Glow Background */}
-                <div className="absolute inset-3 bg-indigo-500 rounded-full blur-xl opacity-40 group-hover:opacity-60 animate-pulse transition-opacity duration-500"></div>
-                
-                {/* Main Button */}
+              {/* Center Add Button (Floating) */}
+              <div className="relative -top-5 group cursor-pointer" onClick={handleOpenAddForm}>
+                {/* Glow */}
+                <div className="absolute inset-2 bg-indigo-500 rounded-full blur-2xl opacity-30 group-hover:opacity-50 animate-pulse transition-opacity duration-500"></div>
+                {/* Button */}
                 <button
                   aria-label="New Transaction"
-                  className="relative w-20 h-20 flex items-center justify-center bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/40 hover:shadow-indigo-500/60 hover:scale-105 active:scale-95 transition-all duration-300 border-[6px] border-slate-50 dark:border-slate-900 z-10 overflow-hidden"
+                  className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-full shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-110 active:scale-95 transition-all duration-300 border-[4px] border-white dark:border-slate-900 z-10"
                 >
-                  {/* Inner sheen effect */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent opacity-50"></div>
-                  
-                  {/* Icon with Animation */}
-                  <AddIcon className="w-9 h-9 animate-plus-icon drop-shadow-md relative z-20" />
+                  <AddIcon className="w-8 h-8 animate-plus-icon" />
                 </button>
               </div>
 
+              {/* Share Button */}
               <button
                 onClick={() => setIsShareOptionsOpen(true)}
                 aria-label="Share Transactions"
-                className="group flex flex-col items-center justify-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors active:scale-95"
+                className="group relative flex flex-col items-center justify-center gap-1 active:scale-95 transition-all duration-200"
               >
-                <div className="p-2 rounded-xl group-hover:bg-indigo-50 dark:group-hover:bg-slate-800 transition-colors">
-                   <ShareIcon className="w-6 h-6" />
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 shadow-sm group-hover:shadow-indigo-100 dark:group-hover:shadow-none border border-slate-200 dark:border-slate-700 transition-all duration-300">
+                   <ShareIcon className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-semibold tracking-wide">Share</span>
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 tracking-wide uppercase">Share</span>
               </button>
+
             </div>
           </div>
         )}
